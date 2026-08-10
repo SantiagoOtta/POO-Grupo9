@@ -33,7 +33,7 @@ python - postgresql - linux - javascript - HTML5 - CSS - Git
 ---
 
 
-### Matias Ezequiel Saafigueroa Dobarro0
+### Matias Ezequiel Saafigueroa Dobarro
 
 
 
