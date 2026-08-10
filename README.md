@@ -94,6 +94,37 @@ Soy estudiante de la tecnicatura en desarrollo software en la universidad Argent
 -SQL
 
 ---
+### Giuliana Cataldi
+
+**Sobre mi**
+Mi nombre es Giuliana Cataldi, tengo 22 años y soy estudiante en la Licenciatura de Tecnología de la Información en UADE. Actualmente soy desarrolladora fullstack para un negocio pero me quiero desarrollar profesionalmente en el área de seguridad informática.
+
+**🎯 Objetivos**
+- Recibirme.
+- Trabajar de lo que me gusta.
+- Poder ser independiente. 
+
+
+**🏆 Logros**
+- Poder animarme a especializarme en el area que me gusta.
+- A ver avanzado en la carrera.
+
+**❤️ Gustos**
+- La lectura
+- Programar
+- Jugar videojuegos
+
+**💻 Conocimientos**
+- Java
+- Python
+- Kali Linux
+- SQL
+- React
+- Javascript
+
+---
+
+
 
 ## Bitácora
 
