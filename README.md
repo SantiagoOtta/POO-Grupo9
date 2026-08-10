@@ -7,6 +7,7 @@
 (foto)
 
 **Sobre mi**
+
 Soy estudiante de la Tecnicatura en Desarrollo de Software en la Universidad Argentina de la Empresa (UADE). Actualmente trabajo en la Universidad de Buenos Aires (UBA), donde automatizo flujos de datos, creo, administro y mantengo programas para los distintos departamentos del Rectorado y colaboro con el programa de modernización institucional.
 
 **🎯 Objetivos**
