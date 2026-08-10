@@ -27,6 +27,7 @@ Soy estudiante de la Tecnicatura en Desarrollo de Software en la Universidad Arg
 - Fútbol
 
 **💻 Conocimientos**
+
 python - postgresql - linux - javascript - HTML5 - CSS - Git
 
 ---
