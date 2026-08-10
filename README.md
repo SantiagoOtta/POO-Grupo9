@@ -65,5 +65,35 @@ Web & Frontend: React, HTML5, CSS3.
 Herramientas & DevOps: Docker, Git, GitHub, Vercel, Manual QA.
 Idiomas: Español (Nativo), Inglés Técnico.  
 
+---
+
+### Santiago Agustin Elcano
+
+**Sobre mi**
+Soy estudiante de la tecnicatura en desarrollo software en la universidad Argentina de la empresa (UADE). Actualmente no estoy trabajando, poseo conocimientos en ciencias sociales y historia además de los conocimientos que estoy adquiriendo en la carrera.
+
+**🎯 Objetivos**
+-Recibirme 
+-Trabajar de lo que estoy estudiando
+-reforzar mis conocimientos 
+-mejorar mi liderazgo y administración 
+
+**🏆 Logros**
+-CCNA 1 (Introduccion al networking)
+
+**❤️ Gustos**
+- independiente de avellaneda  
+- futbol
+- leer 
+- videojuegos
+
+**💻 Conocimientos**
+-lo basico de java
+-python
+-html/css
+-SQL
+
+---
+
 ## Bitácora
 
