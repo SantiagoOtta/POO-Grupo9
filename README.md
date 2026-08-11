@@ -32,10 +32,7 @@ python - postgresql - linux - javascript - HTML5 - CSS - Git
 
 ---
 
-
 ### Matias Ezequiel Saafigueroa Dobarro
-
-
 
 **Sobre mi**
 
@@ -44,31 +41,31 @@ Apasionado por el desarrollo de software, la arquitectura de bases de datos (SQL
 
 **🎯 Objetivos**
 
-Consolidar mi formación en Ingeniería de Software y arquitectura de datos distribuidos. 
-Aplicar y profundizar conocimientos en el desarrollo Backend con Python y Java. 
-Diseñar e implementar soluciones tecnológicas automatizadas para optimizar la gestión comercial y operacional.  
+- Consolidar mi formación en Ingeniería de Software y arquitectura de datos distribuidos. 
+- Aplicar y profundizar conocimientos en el desarrollo Backend con Python y Java. 
+- Diseñar e implementar soluciones tecnológicas automatizadas para optimizar la gestión comercial y operacional.  
 
 **🏆 Logros**
 
-Sistema de Gestión Deportiva: Diseño e implementación de un sistema en Java para reserva de canchas y procesamiento de pagos.
-Automatización de Consultorio: Desarrollo de una herramienta de escritorio con Python y Tkinter para la gestión de turnos y fichas odontológicas.
-Diseño y Arquitectura de Datos: Implementación de modelos relacionales (SQL) y bases NoSQL (Redis, MongoDB, Grafos) para diversos entornos del ámbito académico y comercial. 
-Emprendimiento e Infraestructura: Gestión de servicios de armado/customización de hardware de alto rendimiento e integración de canales digitales de venta.
+- Sistema de Gestión Deportiva: Diseño e implementación de un sistema en Java para reserva de canchas y procesamiento de pagos.
+- Automatización de Consultorio: Desarrollo de una herramienta de escritorio con Python y Tkinter para la gestión de turnos y fichas odontológicas.
+- Diseño y Arquitectura de Datos: Implementación de modelos relacionales (SQL) y bases NoSQL (Redis, MongoDB, Grafos) para diversos entornos del ámbito académico y comercial. 
+- Emprendimiento e Infraestructura: Gestión de servicios de armado/customización de hardware de alto rendimiento e integración de canales digitales de venta.
 
 **❤️ Gustos**
 
-Desarrollo de software y programación en Python.
-Hardware, customización y armado de PCs de alto rendimiento.
-Comercio e innovación en productos tecnológicos y dispositivos electrónicos.
-Jugar Handball
+- Desarrollo de software y programación en Python.
+- Hardware, customización y armado de PCs de alto rendimiento.
+- Comercio e innovación en productos tecnológicos y dispositivos electrónicos.
+- Jugar Handball
 
 **💻 Conocimientos**
 
-Lenguajes: Python (Avanzado), Java 21, JavaScript.
-Bases de Datos: SQL (Relacionales), NoSQL (MongoDB, Cassandra, Redis, Grafos / Orientadas a Documentos).
-Web & Frontend: React, HTML5, CSS3.
-Herramientas & DevOps: Docker, Git, GitHub, Vercel, Manual QA.
-Idiomas: Español (Nativo), Inglés Técnico.  
+- Lenguajes: Python (Avanzado), Java 21, JavaScript.
+- Bases de Datos: SQL (Relacionales), NoSQL (MongoDB, Cassandra, Redis, Grafos / Orientadas a Documentos).
+- Web & Frontend: React, HTML5, CSS3.
+- Herramientas & DevOps: Docker, Git, GitHub, Vercel, Manual QA.
+- Idiomas: Español (Nativo), Inglés Técnico.  
 
 ---
 
@@ -76,14 +73,14 @@ Idiomas: Español (Nativo), Inglés Técnico.
 
 **Sobre mi**
 
-Soy estudiante de la tecnicatura en desarrollo software en la universidad Argentina de la empresa (UADE). Actualmente no estoy trabajando, poseo conocimientos en ciencias sociales y historia además de los conocimientos que estoy adquiriendo en la carrera.
+- Soy estudiante de la tecnicatura en desarrollo software en la universidad Argentina de la empresa (UADE). Actualmente no estoy trabajando, poseo conocimientos en ciencias sociales y historia además de los conocimientos que estoy adquiriendo en la carrera.
 
 **🎯 Objetivos**
 
--Recibirme 
--Trabajar de lo que estoy estudiando
--reforzar mis conocimientos 
--mejorar mi liderazgo y administración 
+- Recibirme  
+- Trabajar de lo que estoy estudiando
+- Reforzar mis conocimientos 
+- Mejorar mi liderazgo y administración 
 
 **🏆 Logros**
 
@@ -91,17 +88,17 @@ Soy estudiante de la tecnicatura en desarrollo software en la universidad Argent
 
 **❤️ Gustos**
 
-- independiente de avellaneda  
-- futbol
-- leer 
-- videojuegos
+- Independiente de avellaneda  
+- Futbol
+- Leer 
+- Videojuegos
 
 **💻 Conocimientos**
 
--lo basico de java
--python
--html/css
--SQL
+- Lo basico de java
+- Python
+- HTML/CSS
+- SQL
 
 ---
 
