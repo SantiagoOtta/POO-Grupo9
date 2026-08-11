@@ -4,8 +4,6 @@
 
 ### Santiago Diego Otta Mendez
 
-(foto)
-
 **Sobre mi**
 
 Soy estudiante de la Tecnicatura en Desarrollo de Software en la Universidad Argentina de la Empresa (UADE). Actualmente trabajo en la Universidad de Buenos Aires (UBA), donde automatizo flujos de datos, creo, administro y mantengo programas para los distintos departamentos del Rectorado y colaboro con el programa de modernización institucional.
@@ -28,7 +26,11 @@ Soy estudiante de la Tecnicatura en Desarrollo de Software en la Universidad Arg
 
 **💻 Conocimientos**
 
-python - postgresql - linux - javascript - HTML5 - CSS - Git
+- Lenguajes: Python (Avanzado), Java 21, JavaScript.
+- Bases de Datos: SQL (Relacionales), PostgreSQL.
+- Web & Frontend: React, HTML5, CSS3.
+- Herramientas & DevOps: Git, GitHub.
+- Idiomas: Español (Nativo), Inglés B2.  
 
 ---
 
@@ -132,5 +134,42 @@ Mi nombre es Giuliana Cataldi, tengo 22 años y soy estudiante en la Licenciatur
 
 ---
 
+### Thiago Luciano Arce
+
+**Sobre mí**
+
+Tengo 22 años y estudio la carrera de ingenieria informatica en la facultad. Me interesa mucho aprender a programar en entornos formales.
+
+**🎯 Objetivos**
+
+- Aprobar la materia con buena nota.
+- Entender la lógica de la Programación Orientada a Objetos (POO).
+- Aprender a trabajar en equipo usando GitHub.
+
+**🏆 Logros**
+
+- Instalé y configuré correctamente IntelliJ IDEA en mi computadora.
+- Pude conectarme y entender la estructura del repositorio del grupo.
+
+**❤️ Gustos**
+
+- Me gusta jugar videojuegos, escuchar música, entrenar.
+- Pasar tiempo con amigos y ver series.
+
+**💻 Conocimientos**
+
+- Manejo básico de computadoras.
+- Herramientas de desarrollo: IntelliJ IDEA (en aprendizaje), GitHub (en aprendizaje).
+
+--- 
+
 ## Bitácora
 
+### Bloque 1 - Estructuras if - else
+
+Resolucion de ejercicios:
+  - Ejercicio 1 - Cálculo de raíces de una ecuación cuadrática.
+  - Ejercicio 2 - Nombre y días de un mes dado su número.
+  - Ejercicio 3 - Determinar si un año es bisiesto.
+
+---
