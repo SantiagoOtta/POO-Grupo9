@@ -5,6 +5,7 @@
 
 ### Santiago Diego Otta Mendez
 <img src="./Foto/WhatsApp Image 2026-08-13 at 14.48.28.jpeg" alt="Santiago Diego Otta Mendez" width="180">
+
 **Sobre mi**
 
 Soy estudiante de la Tecnicatura en Desarrollo de Software en la Universidad Argentina de la Empresa (UADE). Actualmente trabajo en la Universidad de Buenos Aires (UBA), donde automatizo flujos de datos, creo, administro y mantengo programas para los distintos departamentos del Rectorado y colaboro con el programa de modernización institucional.
@@ -34,8 +35,9 @@ Soy estudiante de la Tecnicatura en Desarrollo de Software en la Universidad Arg
 - Idiomas: Español (Nativo), Inglés B2.  
 
 ---
-<img src="./Foto/173846822.jpg" alt="Matías Saafigueroa" width="180">
+
 ### Matias Ezequiel Saafigueroa Dobarro
+<img src="./Foto/173846822.jpg" alt="Matías Saafigueroa" width="180">
 
 **Sobre mi**
 
@@ -74,6 +76,7 @@ Apasionado por el desarrollo de software, la arquitectura de bases de datos (SQL
 
 ### Santiago Agustin Elcano
 <img src="./Foto/WhatsApp Image 2026-08-13 at 14.25.28.jpeg" alt="Santiago Agustin Elcano" width="180">
+
 **Sobre mi**
 
 - Soy estudiante de la tecnicatura en desarrollo software en la universidad Argentina de la empresa (UADE). Actualmente no estoy trabajando, poseo conocimientos en ciencias sociales y historia además de los conocimientos que estoy adquiriendo en la carrera.
@@ -107,6 +110,7 @@ Apasionado por el desarrollo de software, la arquitectura de bases de datos (SQL
 
 ### Giuliana Cataldi
 <img src="./Foto/WhatsApp Image 2026-08-11 at 15.22.55.jpeg" alt="Giuliana Cataldi" width="180">
+
 **Sobre mi**
 
 Mi nombre es Giuliana Cataldi, tengo 22 años y soy estudiante en la Licenciatura de Tecnología de la Información en UADE. Actualmente soy desarrolladora fullstack para un negocio pero me quiero desarrollar profesionalmente en el área de seguridad informática.
