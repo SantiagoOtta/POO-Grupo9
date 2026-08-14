@@ -1,8 +1,10 @@
+# Los Alomantes
 ## Presentaciones
 
 ---
 
 ### Santiago Diego Otta Mendez
+<img src="./Foto/WhatsApp Image 2026-08-13 at 14.48.28.jpeg" alt="Santiago Diego Otta Mendez" width="180">
 
 **Sobre mi**
 
@@ -35,6 +37,7 @@ Soy estudiante de la Tecnicatura en Desarrollo de Software en la Universidad Arg
 ---
 
 ### Matias Ezequiel Saafigueroa Dobarro
+<img src="./Foto/173846822.jpg" alt="Matías Saafigueroa" width="180">
 
 **Sobre mi**
 
@@ -72,6 +75,7 @@ Apasionado por el desarrollo de software, la arquitectura de bases de datos (SQL
 ---
 
 ### Santiago Agustin Elcano
+<img src="./Foto/WhatsApp Image 2026-08-13 at 14.25.28.jpeg" alt="Santiago Agustin Elcano" width="180">
 
 **Sobre mi**
 
@@ -105,6 +109,7 @@ Apasionado por el desarrollo de software, la arquitectura de bases de datos (SQL
 ---
 
 ### Giuliana Cataldi
+<img src="./Foto/WhatsApp Image 2026-08-11 at 15.22.55.jpeg" alt="Giuliana Cataldi" width="180">
 
 **Sobre mi**
 
@@ -135,6 +140,7 @@ Mi nombre es Giuliana Cataldi, tengo 22 años y soy estudiante en la Licenciatur
 ---
 
 ### Thiago Luciano Arce
+<img src="./Foto/WhatsApp Image 2026-08-10 at 17.18.18.jpeg" alt="Thiago Luciano Arce" width="180">
 
 **Sobre mí**
 

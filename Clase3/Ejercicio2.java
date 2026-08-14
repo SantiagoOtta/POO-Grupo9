@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class actividad2{
+public class Ejercio2{
     public static void CalcularFibonacci(int x){
         int fibonacciA=0;
         int fibonacciB=1;
