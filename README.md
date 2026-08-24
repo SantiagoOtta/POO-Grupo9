@@ -192,7 +192,7 @@ Resolución de ejercicios:
 ### 24/08 - Guía de Ejercitación clase III
 
 Resolución de Ejercicios:
-  Bloque 1 - Bloque II - Bloque III en el .txt.
-  Bloque IV en archivo .zip.
+ - Bloque 1 - Bloque II - Bloque III en el .txt.
+ - Bloque IV en archivo .zip.
   
 ---
