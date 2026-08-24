@@ -171,11 +171,27 @@ Tengo 22 años y estudio la carrera de ingenieria informatica en la facultad. Me
 
 ## Bitácora
 
-### Bloque 1 - Estructuras if - else
+### 10/08 - Estructuras if - else, while, do-while
 
-Resolucion de ejercicios:
+Resolución de ejercicios:
+  Manual I
   - Ejercicio 1 - Cálculo de raíces de una ecuación cuadrática.
   - Ejercicio 2 - Nombre y días de un mes dado su número.
   - Ejercicio 3 - Determinar si un año es bisiesto.
+  
+  Manual II
+  - Ejercicio 1 - Dado un entero positivo n, calcular la suma.
+  - Ejercicio 2 - Calculo de primero 7 términos de la sucesión fibonacci.
 
+  Manual III
+  - Ejercicio 1 - Dado un numero determinar cuando dígitos tiene.
+  - Ejercicio 2 - Dadas 5 notas finales determinar cuantas fueron >= a 3.0.
+
+---
+
+### 24/08 - Guía de Ejercitación clase III
+
+Resolución de Ejercicios:
+  Bloque 1 - Bloque II - Bloque III en el .txt.
+  Bloque IV en archivo .zip.
 ---
