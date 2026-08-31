@@ -1,7 +1,6 @@
-package Clase3;
 import java.util.Scanner;
 
-public class Ejercicio1{
+public class SumaSerie {
     public static double CalcularSuma(int x){
         int i=1;
         double suma=0.0;

@@ -1,7 +1,6 @@
-package Clase2;
 import java.util.Scanner;
 
-public class Ejercicio1 {
+public class CuadraticaYDiscriminante {
     public static void resolverCuadratica(double a, double b, double c) {
         if (a == 0) {
             System.out.println("No es una ecuación cuadrática (a debe ser distinto de 0).");
