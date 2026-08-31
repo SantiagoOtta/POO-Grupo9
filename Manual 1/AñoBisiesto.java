@@ -1,7 +1,6 @@
-package Clase2;
 import java.util.Scanner;
 
-public class Ejercicio3 {
+public class AñoBisiesto {
     public static boolean esBisiesto(int anio) {
         return (anio % 4 == 0 && (anio % 100 != 0 || anio % 400 == 0));
     }

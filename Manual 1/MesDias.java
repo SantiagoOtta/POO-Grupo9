@@ -1,7 +1,6 @@
-package Clase2;
 import java.util.Scanner;
 
-public class Ejercicio2 {
+public class MesDias {
     public static void mostrarMes(int numeroMes) {
         String[] nombres = {
                 "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",

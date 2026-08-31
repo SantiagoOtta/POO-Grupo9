@@ -1,6 +1,4 @@
-package Clase3;
-
-public class Ejercicio3 {
+public class ContarDigitos {
     public static void main(String[] args) {
         int numero = 12345;
         int contador = 0;
