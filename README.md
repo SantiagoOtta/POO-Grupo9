@@ -194,5 +194,13 @@ Resolución de ejercicios:
 Resolución de Ejercicios:
  - Bloque 1 - Bloque II - Bloque III en el .txt.
  - Bloque IV en archivo .zip.
-  
+
+---
+
+### 28/08 - Estructura repetitiva for
+
+Resolución de ejercicios:
+  - Ejercicio 1 - Calcular el factorial de un número entero positivo.
+  - Ejercicio 2 - Determinar el MCD y el MCM de un número.
+
 ---
