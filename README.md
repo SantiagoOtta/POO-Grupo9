@@ -204,3 +204,19 @@ Resolución de ejercicios:
   - Ejercicio 2 - Determinar el MCD y el MCM de un número.
 
 ---
+
+### 31/08 - Diagrama de Clase y Secuencia
+
+Resolcion de problemas:
+  - Diagrama de Clase - Determinar la estructura y las relaciones de la universidad.
+  - Diagrama de Secuencia - Determinar el ciclo de vida de lo procesos y en el orden de ejecucion.
+
+---
+
+### 02/10 - Reunion 1 TP
+
+-Llamada para resolver dudas y definir los parametros basicos del juego y narrativa
+
+### 03/10 - Documentacion y diagrama de clases
+
+-Llamada para la creacion en conjunto del diagrama de clases y documentacion
