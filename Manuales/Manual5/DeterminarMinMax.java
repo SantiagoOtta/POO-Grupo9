@@ -1,6 +1,6 @@
 package Manual5;
 
-public class Ejercicio1 {
+public class DeterminarMinMax {
     public static void main(String[] args) {
        int[] numeros = {12,36,24,8,10,67};
 
