@@ -215,8 +215,12 @@ Resolcion de problemas:
 
 ### 02/10 - Reunion 1 TP
 
--Llamada para resolver dudas y definir los parametros basicos del juego y narrativa
+- Llamada para resolver dudas y definir los parametros basicos del juego y narrativa
 
 ### 03/10 - Documentacion y diagrama de clases
 
--Llamada para la creacion en conjunto del diagrama de clases y documentacion
+- Llamada para la creacion en conjunto del diagrama de clases y documentacion
+
+### 7/10 - 8/10 - Creacion del Esqueleto del programa
+
+- Creacion de clases y firmas de metodos. 
