@@ -224,3 +224,7 @@ Resolcion de problemas:
 ### 7/10 - 8/10 - Creacion del Esqueleto del programa
 
 - Creacion de clases y firmas de metodos. 
+
+### 14/10 - Revisión del esqueleto del programa
+
+- Primera revisión previa al comienzo de la "segunda fase" del programa
