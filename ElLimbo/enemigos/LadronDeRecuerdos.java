@@ -3,7 +3,6 @@ package enemigos;
 import core.Elemento;
 import core.Personaje;
 import recuerdos.Recuerdo;
-
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -24,5 +23,4 @@ public class LadronDeRecuerdos extends Enemigo {
     public void robarRecuerdos(Personaje personaje) {
 
     }
-
 }

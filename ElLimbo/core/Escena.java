@@ -1,5 +1,6 @@
 package core;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Escena {
@@ -15,5 +16,4 @@ public class Escena {
     public boolean resolver(Personaje personaje) {
         return false;
     }
-
 }

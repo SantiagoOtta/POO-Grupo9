@@ -19,12 +19,11 @@ public class JefeFinal extends Enemigo {
 
     }
 
-    public void ataqueEspecial (Personaje personaje){
+    public void ataqueEspecial(Personaje personaje) {
 
     }
 
-    public void avanzarFase () {
-
+    public void avanzarFase() {
+        
     }
 }
-

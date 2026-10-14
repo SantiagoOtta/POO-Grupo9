@@ -17,7 +17,7 @@ public class RecuerdoDeLugar extends Recuerdo implements Reutilizable {
     }
 
     @Override
-    public boolean quedanUsos() {
+    public boolean quedaUsos() {
         return false;
     }
 }
