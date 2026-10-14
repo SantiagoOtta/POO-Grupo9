@@ -6,7 +6,7 @@ import recuerdos.Recuerdo;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GuardianDeRecuerdos implements Interactuable {
+public class GuardiaDeRecuerdos implements Interactuable {
 
     private static HashMap<Personaje, ArrayList<Recuerdo>> memoriaGlobal = new HashMap<>();
 

@@ -2,8 +2,9 @@ package recuerdos;
 
 import core.Elemento;
 import core.Personaje;
+import excepciones.RecuerdoPerdidoException;
 
-public class RecuerdoDeHabilidad extends Recuerdo implements Reutilizable{
+public class RecuerdoDeHabilidad {
     private int usosRestantes;
     private boolean fragmentado;
     private Elemento elemento;
@@ -15,11 +16,6 @@ public class RecuerdoDeHabilidad extends Recuerdo implements Reutilizable{
         this.usosRestantes = 3;
         this.fragmentado = false;
         this.daño = 15;
-    }
-
-    @Override
-    public void activar(Personaje personaje) {
-
     }
 
     @Override
