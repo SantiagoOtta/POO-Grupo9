@@ -1,7 +1,10 @@
 package ui;
 
+import core.Personaje;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class VentanaJuego extends JFrame {
 
@@ -59,6 +62,7 @@ public class VentanaJuego extends JFrame {
 
         JScrollPane scroll = new JScrollPane(zona);
         scroll.setBorder(null);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.getViewport().setBackground(FONDO);
         return scroll;
     }
@@ -104,5 +108,57 @@ public class VentanaJuego extends JFrame {
         estado.add(Box.createVerticalStrut(14));
         estado.add(recuerdos);
         return estado;
+    }
+
+    public void ponerZona(String texto) {
+        titulo.setText(texto);
+    }
+
+    public void ponerEstado(int vida, int vidaMaxima, String textoDatos, String textoRecuerdos) {
+        barraVida.setMaximum(vidaMaxima);
+        barraVida.setValue(vida);
+        barraVida.setString(vida + " / " + vidaMaxima);
+        datos.setText(textoDatos);
+        recuerdos.setText(textoRecuerdos);
+    }
+
+    public void ponerPregunta(String texto, String[] opciones, ArrayBlockingQueue<Integer> respuestas) {
+        narracion.setText("<html><div style='width:420px'>" + texto.replace("\n","<br>") + "</div></html>");
+        botones.removeAll();
+        for (int i = 0; i < opciones.length; i++) {
+            JButton boton = crearBoton(opciones[i]);
+            int elegida = i;
+            boton.addActionListener(e -> {
+                apagarBotones();
+                respuestas.offer(elegida);
+            });
+            botones.add(boton);
+            botones.add(Box.createVerticalStrut(8));
+        }
+        botones.revalidate();
+        botones.repaint();
+    }
+
+    private JButton crearBoton(String texto) {
+        JButton boton = new JButton(texto);
+        boton.setFont(new Font(Font.SERIF, Font.PLAIN, 16));
+        boton.setForeground(TEXTO);
+        boton.setBackground(BOTON);
+        boton.setOpaque(true);
+        boton.setFocusPainted(false);
+        boton.setHorizontalAlignment(SwingConstants.LEFT);
+        boton.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(DORADO),
+                BorderFactory.createEmptyBorder(8, 16, 8, 16)));
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        boton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, boton.getPreferredSize().height));
+        return boton;
+    }
+
+    private void apagarBotones() {
+        for (Component componente : botones.getComponents()) {
+            componente.setEnabled(false);
+        }
     }
 }
