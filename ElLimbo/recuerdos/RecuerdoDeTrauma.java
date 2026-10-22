@@ -1,21 +1,19 @@
 package recuerdos;
 
-import core.Personaje;
 import core.Elemento;
+import core.Personaje;
 
 public class RecuerdoDeTrauma extends Recuerdo {
 
     private Elemento elemento;
     private int daño;
 
-    public RecuerdoDeTrauma(String nombre, Elemento elemento) {
-        super(nombre, true);
+    public RecuerdoDeTrauma(String nombre, String descripcion, Elemento elemento) {
+        super(nombre, descripcion);
         this.elemento = elemento;
-        this.daño = 35;
+        this.daño = 0;
     }
 
     @Override
-    public void activar(Personaje personaje) {
-
-    }
+    public void activar(Personaje personaje) {}
 }

@@ -2,19 +2,20 @@ package recuerdos;
 
 import core.Personaje;
 
-public abstract class Recuerdo implements Comparable <Recuerdo> {
-    private String nombre;
-    private boolean esPermanente;
+public abstract class Recuerdo implements Comparable<Recuerdo> {
 
-    public Recuerdo(String nombre, boolean esPermanente) {
+    private String nombre;
+    private String descripcion;
+
+    public Recuerdo(String nombre, String descripcion) {
         this.nombre = nombre;
-        this.esPermanente = esPermanente;
+        this.descripcion = descripcion;
     }
 
-    public abstract void activar (Personaje personaje);
+    public abstract void activar(Personaje personaje);
 
     @Override
-    public int comparteTo(Recuerdo otro) {
+    public int compareTo(Recuerdo otro) {
         return 0;
     }
 }

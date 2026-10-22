@@ -3,12 +3,11 @@ package npcs;
 import core.Interactuable;
 import core.Personaje;
 import recuerdos.Recuerdo;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GuardiaDeRecuerdos implements Interactuable {
+public class GuardianDeRecuerdos implements Interactuable {
 
-    private static HashMap<Personaje, ArrayList<Recuerdo>> memoriaGlobal = new HashMap<>();
+    private static HashMap<String,Recuerdo> memoriaGlobal = new HashMap<>();
 
     @Override
     public boolean interactuar(Personaje personaje) {

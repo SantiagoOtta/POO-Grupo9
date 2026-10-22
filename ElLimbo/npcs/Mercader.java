@@ -22,7 +22,7 @@ public class Mercader implements Interactuable {
         return false;
     }
 
-    public boolean recargar(Reutilizable reutilizable, Personaje personaje) {
+    public boolean recargar(Reutilizable recuerdo, Personaje personaje) {
         return false;
     }
 }

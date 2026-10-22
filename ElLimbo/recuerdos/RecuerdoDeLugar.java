@@ -6,8 +6,8 @@ public class RecuerdoDeLugar extends Recuerdo implements Reutilizable {
 
     private int usosRestantes;
 
-    public RecuerdoDeLugar(String nombre) {
-        super(nombre, false);
+    public RecuerdoDeLugar(String nombre, String descripcion) {
+        super(nombre, descripcion);
         this.usosRestantes = 3;
     }
 
@@ -17,7 +17,17 @@ public class RecuerdoDeLugar extends Recuerdo implements Reutilizable {
     }
 
     @Override
-    public boolean quedaUsos() {
+    public boolean quedanUsos() {
         return false;
+    }
+
+    @Override
+    public int getUsosRestantes() {
+        return 0;
+    }
+
+    @Override
+    public void setUsosRestantes(int usosRestantes) {
+
     }
 }
