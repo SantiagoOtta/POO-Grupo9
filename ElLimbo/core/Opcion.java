@@ -8,7 +8,7 @@ public class Opcion {
     Recuerdo recuerdoRequerido;
     Escena siguienteEscena;
 
-    public Opcion (String texto) {
+    public Opcion(String texto) {
         this.texto = texto;
     }
 

@@ -7,11 +7,13 @@ public class JefeFinal extends Enemigo {
 
     private int faseActual;
     private int cantidadFases;
+    private int turnosJugados;
 
-    public JefeFinal(Elemento elemento, int vida, Elemento debilidad, int daño, int cantidadFases) {
+    public JefeFinal(Elemento elemento, int vida, Elemento debilidad, int daño) {
         super(elemento, vida, debilidad, daño);
-        this.cantidadFases = cantidadFases;
         this.faseActual = 1;
+        this.cantidadFases = 2;
+        this.turnosJugados = 0;
     }
 
     @Override
@@ -24,6 +26,6 @@ public class JefeFinal extends Enemigo {
     }
 
     public void avanzarFase() {
-        
+
     }
 }

@@ -5,14 +5,17 @@ import core.Interactuable;
 import core.Personaje;
 
 public abstract class Enemigo implements Interactuable {
+
     protected Elemento elemento;
     protected int vida;
+    protected int vidaMaxima;
     protected Elemento debilidad;
     protected int daño;
 
     public Enemigo(Elemento elemento, int vida, Elemento debilidad, int daño) {
         this.elemento = elemento;
         this.vida = vida;
+        this.vidaMaxima = vida;
         this.debilidad = debilidad;
         this.daño = daño;
     }
@@ -24,7 +27,11 @@ public abstract class Enemigo implements Interactuable {
 
     public abstract void infligirDaño(Personaje personaje);
 
-    public void recibirDaño(int cantidad, Elemento elemento) {
+    public void recibirDaño(int cantidad, Elemento elementoAtaque) {
 
+    }
+
+    public boolean sigueEnCombate() {
+        return false;
     }
 }
