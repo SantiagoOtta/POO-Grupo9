@@ -228,3 +228,7 @@ Resolcion de problemas:
 ### 14/10 - Revisión del esqueleto del programa
 
 - Primera revisión previa al comienzo de la "segunda fase" del programa
+
+### 20/10 - 22/10 - Creacion del diseño de la interfaz grafica.
+
+- Decisiones de color, diseño y estructura de la interfaz.
