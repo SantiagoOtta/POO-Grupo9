@@ -38,6 +38,38 @@ public class Personaje {
         this.bonusDaño = 0;
     }
 
+    public int getVida() {
+        return vida;
+    }
+
+    public int getVidaMaxima() {
+        return vidaMaxima;
+    }
+
+    public int getMonedas() {
+        return monedas;
+    }
+
+    public int getBonusDaño() {
+        return bonusDaño;
+    }
+
+    public Elemento getDebilidad() {
+        return debilidad;
+    }
+
+    public boolean isTieneLlave() {
+        return tieneLlave;
+    }
+
+    public ArrayList<Recuerdo> getRecuerdos() {
+        return new ArrayList<>(recuerdos);
+    }
+
+    public void agregarRecuerdo(Recuerdo recuerdo) {
+        recuerdos.add(recuerdo);
+    }
+
     public void recibirDaño(int cantidad, Elemento elemento) {
 
     }
