@@ -21,6 +21,11 @@ public class Dialogos {
         ventana.setVisible(true);
     }
 
+
+    public static void cerrar() {
+        SwingUtilities.invokeLater(() -> ventana.dispose());
+    }
+
     public static void zona(String titulo) {
         SwingUtilities.invokeLater(() -> ventana.ponerZona(titulo));
     }

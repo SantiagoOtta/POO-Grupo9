@@ -38,6 +38,9 @@ public class Juego {
                 + "Si hay redención para alguien como vos tiene que encontrarse en algún lugar de esta oscuridad.");
         Dialogos.mostrar("A lo lejos comenzas a vislumbrar un diminuto pero esperanzador destello. Caminas para asegurarte de que no sea una ilusión.");
         elegirRecuerdosIniciales();
+        llegarAlRefugio();
+        menuCastillo();
+        Dialogos.cerrar();
     }
 
     public void otorgarRecompensa(Personaje personaje) {
@@ -54,6 +57,33 @@ public class Juego {
 
     public boolean cargarPartida() {
         return false;
+    }
+
+    private void llegarAlRefugio() {
+        Dialogos.zona("El Castillo");
+        Dialogos.mostrar("Seguís por el camino. Despues de un largo trecho algo se recorta en la oscuridad: "
+                + "una estructura enorme, muy difusa, como si la vieras a traves de la niebla.\n\n"
+                + "Distinguis los finos y acentuados bordes, las altas torres, es el castillo del rey."
+                + "Por alguna razón parece la sombra literal de aquella enormidad, a su alrededor lo que pareceria un bosque.");
+        Dialogos.mostrar("Entre los 'arboles' se alzan luces como las que viste anteriormente, mas recuerdos. \n\n"
+                + "Adentro del refugio no se ve nada. Lo único que podes hacer es salir a explorar el bosque.");
+    }
+
+    private void menuCastillo() {
+        boolean enElJuego = true;
+        while (enElJuego) {
+            Dialogos.zona("El Castillo");
+            Dialogos.actualizarEstado(jugador);
+            String[] opciones = {"Salir al bosque", "Salir del juego"};
+            int elegida = Dialogos.elegir("El castillo esta envuelto en niebla. Apenas distinguis muros y sombras; "
+                    + "adentro no se ve nada.\n\n Afuera, el bosque espera.", opciones);
+            if (elegida == 0) {
+                Dialogos.zona("El bosque");
+                Dialogos.mostrar("(Bosque no programado)");
+            } else if (Dialogos.confirmar("¿Seguro que querés salir del juego?")) {
+                enElJuego = false;
+            }
+        }
     }
 
     private void elegirRecuerdosIniciales() {
