@@ -3,6 +3,8 @@ package core;
 import excepciones.DisolucionException;
 import excepciones.RecuerdoPerdidoException;
 import recuerdos.Recuerdo;
+import recuerdos.RecuerdoDeTrauma;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -62,12 +64,19 @@ public class Personaje {
         return tieneLlave;
     }
 
+    public boolean isTieneRecuerdoClave() {
+        return tieneRecuerdoClave;
+    }
+
     public ArrayList<Recuerdo> getRecuerdos() {
         return new ArrayList<>(recuerdos);
     }
 
     public void agregarRecuerdo(Recuerdo recuerdo) {
         recuerdos.add(recuerdo);
+        if (recuerdo instanceof RecuerdoDeTrauma && debilidad == null) {
+            debilidad = ((RecuerdoDeTrauma) recuerdo).getElemento();
+        }
     }
 
     public void recibirDaño(int cantidad, Elemento elemento) {

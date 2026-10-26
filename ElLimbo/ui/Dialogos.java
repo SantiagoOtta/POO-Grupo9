@@ -45,6 +45,7 @@ public class Dialogos {
                 + "<br>Bonus de daño: +" + personaje.getBonusDaño()
                 + "<br>Debilidad: " + nombreElemento(personaje.getDebilidad())
                 + "<br>Llave del castillo: " + (personaje.isTieneLlave() ? "si" : "no")
+                + "<br>Recuerdo clave: " + (personaje.isTieneRecuerdoClave() ? "si" : "no")
                 + "<html>";
 
         StringBuilder lista = new StringBuilder("<html><div style='width:180p'>RECUERDOS");
@@ -80,7 +81,7 @@ public class Dialogos {
         }
     }
 
-    private static String nombreElemento(Elemento elemento) {
+    public static String nombreElemento(Elemento elemento) {
         if (elemento == null) {
             return "ninguna";
         }

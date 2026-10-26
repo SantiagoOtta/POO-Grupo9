@@ -11,7 +11,11 @@ public class RecuerdoDeTrauma extends Recuerdo {
     public RecuerdoDeTrauma(String nombre, String descripcion, Elemento elemento) {
         super(nombre, descripcion);
         this.elemento = elemento;
-        this.daño = 0;
+        this.daño = 35 + (int) (Math.random() * 16);
+    }
+
+    public Elemento getElemento() {
+        return elemento;
     }
 
     @Override
