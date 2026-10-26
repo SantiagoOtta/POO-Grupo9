@@ -15,7 +15,11 @@ public class RecuerdoDeHabilidad extends Recuerdo implements Reutilizable {
         this.elemento = elemento;
         this.usosRestantes = 3;
         this.fragmentado = false;
-        this.daño = 0;
+        this.daño = 14 + (int) (Math.random() * 7);
+    }
+
+    public Elemento getElemento() {
+        return elemento;
     }
 
     @Override
