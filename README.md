@@ -232,3 +232,7 @@ Resolcion de problemas:
 ### 20/10 - 22/10 - Creacion del diseño de la interfaz grafica.
 
 - Decisiones de color, diseño y estructura de la interfaz.
+
+### 26/10 - Creacion de la introducción
+
+- Se crea la introduccion y comienzo del escenario principal.
