@@ -9,6 +9,7 @@ import recuerdos.RecuerdoDeTrauma;
 import ui.Dialogos;
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.security.DigestException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,16 +75,62 @@ public class Juego {
         while (enElJuego) {
             Dialogos.zona("El Castillo");
             Dialogos.actualizarEstado(jugador);
+            revelarPuertas();
             String[] opciones = {"Salir al bosque", "Salir del juego"};
-            int elegida = Dialogos.elegir("El castillo esta envuelto en niebla. Apenas distinguis muros y sombras; "
-                    + "adentro no se ve nada.\n\n Afuera, el bosque espera.", opciones);
+            int elegida = Dialogos.elegir(descripcionCastillo(), opciones);
             if (elegida == 0) {
+                // TEMPORAL: el bosque se arma en el paso 14. Por ahora te da un recuerdo para probar el castillo.
                 Dialogos.zona("El bosque");
-                Dialogos.mostrar("(Bosque no programado)");
+                ArrayList<Recuerdo> premio = crearPersonas();
+                Collections.shuffle(premio);
+                jugador.agregarRecuerdo(premio.get(0));
+                Dialogos.mostrar("(El bosque todavía no está programado: se arma en el paso 14. Por ahora te llevás "
+                        + premio.get(0).getNombre() + " y volvés al castillo.)");
             } else if (Dialogos.confirmar("¿Seguro que querés salir del juego?")) {
                 enElJuego = false;
             }
         }
+    }
+
+    private void revelarPuertas() {
+        int cantidad = jugador.getRecuerdos().size();
+        if (puertasReveladas < 1 && cantidad >= 6) {
+            puertasReveladas = 1;
+            Dialogos.mostrar("Al volver al castillo notas que el entorno se ve mas nitido, las sombras se van esclareciendo, el castillo tomando su forma original."
+                    + "Las paredes asperas de piedras en forma de ladrillos, el suelo de un granito liso, resquebrajado y agrietado por los años.\n\n"
+                    + "Pero no es todo, el castillo todavia es difuso en algunas zonas, fragmentos de sombra, una densa oscuridad infinita como la primera vez que despertaste, "
+                    + "pareciera que intenta esconder algo.\n\n"
+                    + "En el ala este se descubre un a puerta de madera gastada, tanto o mas que el mismo castillo.");
+        }
+        if (puertasReveladas < 2 && cantidad >= 8) {
+            puertasReveladas = 2;
+            Dialogos.mostrar("Otra vez el castillo cambió, ahora ves un techo aunque caido a pedazos, trozos de madera astillados balanceandose por hilos de fibras rotas."
+                    + "Las arañas sin velas oxidadas, las antorchas en las paredes reducidas a cenizas.\n\n"
+                    + "Al fondo, donde la oscuridad cesa a pesar de su amargura, se entrevé una puerta enorme."
+                    + "No llegas a verla en detalle, pero lo que espera al otro lado es evidentemente abrumador, desprende un aura de panico indescriptible para el verdugo. Como si en cierto punto supiese lo que le espera.");
+        }
+        if  (puertasReveladas < 3 && cantidad >= 10) {
+            puertasReveladas = 3;
+            Dialogos.mostrar("El castillo y todo su alrededor ya cobra el color y la vida (o lo que queda de ella) que deberia. Ya podes verlo casi como cuando lo veias con tus propios ojos en vida.\n\n"
+                    + "En el ala oeste se revela una puerta de madera, identica a la del ala este, de ella se oye una voz perdida en el fondo de tu alma.");
+        }
+    }
+
+    private String descripcionCastillo() {
+        if (puertasReveladas == 0) {
+            return "El castillo esta envuelto en niebla. Apenas se distinguen muros y diagonales."
+                    + "Adentro no se ve nada.\n\nAfuera, el bosque espera.";
+        }
+        StringBuilder texto = new StringBuilder("La oscuridad cesa, se ven muros de piedra, un patio y corredores vacíos.");
+        texto.append("\n\nEn el ala este hay una puerta de madera maltratada por el tiempo.");
+        if (puertasReveladas >= 2) {
+            texto.append("\n\nAl fondo, en la oscuridad, se entrevé una puerta enorme.");
+        }
+        if (puertasReveladas >= 3) {
+            texto.append("\n\nEn el ala este hay una puerta identica a la del ala este, se oye una voz.");
+        }
+        texto.append("\n\nAfuera, el bosque espera.");
+        return texto.toString();
     }
 
     private void elegirRecuerdosIniciales() {
