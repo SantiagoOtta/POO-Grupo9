@@ -31,6 +31,7 @@ public class Juego {
     }
 
     public void iniciar() {
+        Dialogos.alGuardar(() -> guardarPartida());
         Dialogos.zona("El Limbo");
         Dialogos.actualizarEstado(jugador);
         Dialogos.mostrar("Abris los ojos... Oscuridad... Silencio... la nada. \n\n"
@@ -53,7 +54,7 @@ public class Juego {
     }
 
     public void guardarPartida() {
-
+        Dialogos.avisar("El guardado se programa en el paso 21: todavía no se guarda nada.");
     }
 
     public boolean cargarPartida() {
@@ -75,19 +76,18 @@ public class Juego {
         while (enElJuego) {
             Dialogos.zona("El Castillo");
             Dialogos.actualizarEstado(jugador);
+            Dialogos.permitirGuardar(true);
             revelarPuertas();
-            String[] opciones = {"Salir al bosque", "Salir del juego"};
+            String[] opciones = {"Salir al bosque"};
             int elegida = Dialogos.elegir(descripcionCastillo(), opciones);
+            Dialogos.permitirGuardar(false);
             if (elegida == 0) {
-                // TEMPORAL: el bosque se arma en el paso 14. Por ahora te da un recuerdo para probar el castillo.
                 Dialogos.zona("El bosque");
                 ArrayList<Recuerdo> premio = crearPersonas();
                 Collections.shuffle(premio);
                 jugador.agregarRecuerdo(premio.get(0));
                 Dialogos.mostrar("(El bosque todavía no está programado: se arma en el paso 14. Por ahora te llevás "
                         + premio.get(0).getNombre() + " y volvés al castillo.)");
-            } else if (Dialogos.confirmar("¿Seguro que querés salir del juego?")) {
-                enElJuego = false;
             }
         }
     }

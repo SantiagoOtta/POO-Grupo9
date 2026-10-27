@@ -8,7 +8,6 @@ import recuerdos.RecuerdoDeLugar;
 import recuerdos.RecuerdoDePersona;
 
 import javax.swing.SwingUtilities;
-import java.util.Locale;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class Dialogos {
@@ -20,7 +19,6 @@ public class Dialogos {
         ventana = new VentanaJuego();
         ventana.setVisible(true);
     }
-
 
     public static void cerrar() {
         SwingUtilities.invokeLater(() -> ventana.dispose());
@@ -49,18 +47,31 @@ public class Dialogos {
         String datos = "<html>Monedas: " + personaje.getMonedas()
                 + "<br>Bonus de daño: +" + personaje.getBonusDaño()
                 + "<br>Debilidad: " + nombreElemento(personaje.getDebilidad())
-                + "<br>Llave del castillo: " + (personaje.isTieneLlave() ? "si" : "no")
-                + "<br>Recuerdo clave: " + (personaje.isTieneRecuerdoClave() ? "si" : "no")
-                + "<html>";
+                + "<br>Llave del castillo: " + (personaje.isTieneLlave() ? "sí" : "no")
+                + "<br>Recuerdo clave: " + (personaje.isTieneRecuerdoClave() ? "sí" : "no")
+                + "</html>";
 
-        StringBuilder lista = new StringBuilder("<html><div style='width:180p'>RECUERDOS");
+        StringBuilder lista = new StringBuilder("<html><div style='width:180px'>");
         for (Recuerdo recuerdo : personaje.getRecuerdos()) {
-            lista.append("<br>").append(icono(recuerdo)).append(" ").append(recuerdo.getNombre());
+            lista.append(icono(recuerdo)).append(" ").append(recuerdo.getNombre()).append("<br>");
         }
         lista.append("</div></html>");
         String recuerdos = lista.toString();
+        int cantidad = personaje.getRecuerdos().size();
 
-        SwingUtilities.invokeLater(() -> ventana.ponerEstado(vida, vidaMaxima, datos, recuerdos));
+        SwingUtilities.invokeLater(() -> ventana.getPanelEstado().ponerEstado(vida, vidaMaxima, datos, recuerdos, cantidad));
+    }
+
+    public static void permitirGuardar(boolean permitido) {
+        SwingUtilities.invokeLater(() -> ventana.getPanelEstado().permitirGuardar(permitido));
+    }
+
+    public static void alGuardar(Runnable accion) {
+        SwingUtilities.invokeLater(() -> ventana.getPanelEstado().setAccionGuardar(accion));
+    }
+
+    public static void avisar(String texto) {
+        SwingUtilities.invokeLater(() -> ventana.getPanelEstado().ponerAviso(texto));
     }
 
     private static int preguntar(String texto, String[] opciones) {
@@ -79,7 +90,7 @@ public class Dialogos {
             return "⚔";
         } else if (recuerdo instanceof RecuerdoDePersona) {
             return "♥";
-        }else if (recuerdo instanceof RecuerdoDeLugar) {
+        } else if (recuerdo instanceof RecuerdoDeLugar) {
             return "⌂";
         } else {
             return "✶";
