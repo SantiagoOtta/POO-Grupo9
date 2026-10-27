@@ -1,7 +1,5 @@
 package ui;
 
-import core.Personaje;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -12,16 +10,14 @@ public class VentanaJuego extends JFrame {
     static final Color PANEL = new Color(0x22202C);
     static final Color BOTON = new Color(0x2E2B3A);
     static final Color TEXTO = new Color(0xE6E1D3);
-    static final Color Texto_SECUNDARIO = new Color(0x9A9386);
+    static final Color TEXTO_SECUNDARIO = new Color(0x9A9386);
     static final Color DORADO = new Color(0xC9A25A);
     static final Color ROJO = new Color(0xB03A3A);
 
     private JLabel titulo;
     private JLabel narracion;
     private JPanel botones;
-    private JProgressBar barraVida;
-    private JLabel datos;
-    private JLabel recuerdos;
+    private PanelEstado panelEstado;
 
     public VentanaJuego() {
         super("El Limbo");
@@ -29,8 +25,9 @@ public class VentanaJuego extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        panelEstado = new PanelEstado();
         add(crearZona(), BorderLayout.CENTER);
-        add(crearEstado(), BorderLayout.EAST);
+        add(panelEstado, BorderLayout.EAST);
     }
 
     private JScrollPane crearZona() {
@@ -50,7 +47,7 @@ public class VentanaJuego extends JFrame {
         narracion.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         botones = new JPanel();
-        botones.setFont(new Font(Font.SERIF, Font.ITALIC, 16));
+        botones.setLayout(new BoxLayout(botones, BoxLayout.Y_AXIS));
         botones.setOpaque(false);
         botones.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -67,63 +64,16 @@ public class VentanaJuego extends JFrame {
         return scroll;
     }
 
-    private JPanel crearEstado() {
-        JPanel estado = new JPanel();
-        estado.setLayout(new BoxLayout(estado, BoxLayout.Y_AXIS));
-        estado.setBackground(PANEL);
-        estado.setPreferredSize(new Dimension(280, 0));
-        estado.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(0, 1, 0, 0, DORADO),
-                BorderFactory.createEmptyBorder(24, 20, 24, 20)));
-
-        JLabel nombre = new JLabel("EL VERDUGO");
-        nombre.setFont(new Font(Font.SERIF, Font.BOLD, 18));
-        nombre.setForeground(DORADO);
-        nombre.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        barraVida = new JProgressBar(0, 100);
-        barraVida.setValue(100);
-        barraVida.setStringPainted(true);
-        barraVida.setString("100 / 100");
-        barraVida.setForeground(ROJO);
-        barraVida.setBackground(BOTON);
-        barraVida.setMaximumSize(new Dimension(Integer.MAX_VALUE, 22));
-        barraVida.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        datos = new JLabel();
-        datos.setFont(new Font(Font.SERIF, Font.PLAIN, 14));
-        datos.setForeground(TEXTO);
-        datos.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        recuerdos = new JLabel();
-        recuerdos.setFont(new Font(Font.SERIF, Font.PLAIN, 14));
-        recuerdos.setForeground(Texto_SECUNDARIO);
-        recuerdos.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        estado.add(nombre);
-        estado.add(Box.createVerticalStrut(14));
-        estado.add(barraVida);
-        estado.add(Box.createVerticalStrut(14));
-        estado.add(datos);
-        estado.add(Box.createVerticalStrut(14));
-        estado.add(recuerdos);
-        return estado;
+    public PanelEstado getPanelEstado() {
+        return panelEstado;
     }
 
     public void ponerZona(String texto) {
         titulo.setText(texto);
     }
 
-    public void ponerEstado(int vida, int vidaMaxima, String textoDatos, String textoRecuerdos) {
-        barraVida.setMaximum(vidaMaxima);
-        barraVida.setValue(vida);
-        barraVida.setString(vida + " / " + vidaMaxima);
-        datos.setText(textoDatos);
-        recuerdos.setText(textoRecuerdos);
-    }
-
     public void ponerPregunta(String texto, String[] opciones, ArrayBlockingQueue<Integer> respuestas) {
-        narracion.setText("<html><div style='width:420px'>" + texto.replace("\n","<br>") + "</div></html>");
+        narracion.setText("<html><div style='width:420px'>" + texto.replace("\n", "<br>") + "</div></html>");
         botones.removeAll();
         for (int i = 0; i < opciones.length; i++) {
             JButton boton = crearBoton(opciones[i]);
@@ -139,9 +89,13 @@ public class VentanaJuego extends JFrame {
         botones.repaint();
     }
 
-    private JButton crearBoton(String texto) {
+    static JButton crearBoton(String texto) {
+        return crearBoton(texto, 16);
+    }
+
+    static JButton crearBoton(String texto, int tamañoLetra) {
         JButton boton = new JButton(texto);
-        boton.setFont(new Font(Font.SERIF, Font.PLAIN, 16));
+        boton.setFont(new Font(Font.SERIF, Font.PLAIN, tamañoLetra));
         boton.setForeground(TEXTO);
         boton.setBackground(BOTON);
         boton.setOpaque(true);
