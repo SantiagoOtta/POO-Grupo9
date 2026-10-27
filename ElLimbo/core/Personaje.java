@@ -68,6 +68,14 @@ public class Personaje {
         return tieneRecuerdoClave;
     }
 
+    public void setTieneLlave(boolean tieneLlave) {
+        this.tieneLlave = tieneLlave;
+    }
+
+    public void setTieneRecuerdoClave(boolean tieneRecuerdoClave) {
+        this.tieneRecuerdoClave = tieneRecuerdoClave;
+    }
+
     public ArrayList<Recuerdo> getRecuerdos() {
         return new ArrayList<>(recuerdos);
     }

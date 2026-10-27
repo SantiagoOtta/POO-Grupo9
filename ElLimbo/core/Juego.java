@@ -8,9 +8,6 @@ import recuerdos.RecuerdoDePersona;
 import recuerdos.RecuerdoDeTrauma;
 import ui.Dialogos;
 
-import java.awt.*;
-import java.lang.reflect.Array;
-import java.security.DigestException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -34,11 +31,12 @@ public class Juego {
         Dialogos.alGuardar(() -> guardarPartida());
         Dialogos.zona("El Limbo");
         Dialogos.actualizarEstado(jugador);
-        Dialogos.mostrar("Abris los ojos... Oscuridad... Silencio... la nada. \n\n"
-                + "Recordas quien sos, o eras?. El Verdugo, las manos culpables de los asesinatos del rey.");
-        Dialogos.mostrar("Esta nada es lo que conocemos como 'El Limbo', el espacio entre la vida y la muerte.\n\n"
-                + "Si hay redención para alguien como vos tiene que encontrarse en algún lugar de esta oscuridad.");
-        Dialogos.mostrar("A lo lejos comenzas a vislumbrar un diminuto pero esperanzador destello. Caminas para asegurarte de que no sea una ilusión.");
+        Dialogos.mostrar("Abrís los ojos y no hay nada. Ni cielo, ni suelo, ni ruido.\n\n"
+                + "Sabés quién sos: el Verdugo. En vida quitaste muchas vidas, y ninguna fue decisión tuya.\n\n"
+                + "Y recordás algo más: recordás haber muerto.");
+        Dialogos.mostrar("Esto es El Limbo. Si hay redención para alguien como vos, tiene que estar en algún lugar de esta oscuridad.\n\n"
+                + "Caminás un poco, sin saber hacia dónde.");
+        Dialogos.mostrar("Entonces las ves: burbujas flotando frente a vos que, en medio de toda la oscuridad, emiten luz.");
         elegirRecuerdosIniciales();
         llegarAlRefugio();
         menuCastillo();
@@ -63,12 +61,11 @@ public class Juego {
 
     private void llegarAlRefugio() {
         Dialogos.zona("El Castillo");
-        Dialogos.mostrar("Seguís por el camino. Despues de un largo trecho algo se recorta en la oscuridad: "
-                + "una estructura enorme, muy difusa, como si la vieras a traves de la niebla.\n\n"
-                + "Distinguis los finos y acentuados bordes, las altas torres, es el castillo del rey."
-                + "Por alguna razón parece la sombra literal de aquella enormidad, a su alrededor lo que pareceria un bosque.");
-        Dialogos.mostrar("Entre los 'arboles' se alzan luces como las que viste anteriormente, mas recuerdos. \n\n"
-                + "Adentro del refugio no se ve nada. Lo único que podes hacer es salir a explorar el bosque.");
+        Dialogos.mostrar("Seguís caminando por el camino que se abrió frente a vos. Después de un rato, algo se recorta en la oscuridad: "
+                + "una estructura enorme, muy difusa, como si la vieras a través de la niebla.\n\n"
+                + "No sabés qué es, pero entendés que es un lugar para, por lo menos, refugiarte.");
+        Dialogos.mostrar("Desde la entrada mirás hacia atrás. A tu alrededor, entre la niebla, hay un bosque.\n\n"
+                + "Adentro del refugio no se ve nada. Lo único que podés hacer es salir al bosque.");
     }
 
     private void menuCastillo() {
@@ -78,38 +75,121 @@ public class Juego {
             Dialogos.actualizarEstado(jugador);
             Dialogos.permitirGuardar(true);
             revelarPuertas();
-            String[] opciones = {"Salir al bosque"};
-            int elegida = Dialogos.elegir(descripcionCastillo(), opciones);
+
+            ArrayList<String> opciones = new ArrayList<>();
+            opciones.add("Salir al bosque");
+            if (puertasReveladas >= 1 && !jugador.isTieneLlave()) {
+                opciones.add("Acercarte a la puerta del ala este");
+            }
+            if (puertasReveladas >= 2) {
+                opciones.add("Acercarte a la puerta enorme");
+            }
+            if (puertasReveladas >= 3 && !jugador.isTieneRecuerdoClave()) {
+                opciones.add("Acercarte a la puerta del ala oeste");
+            }
+
+            int elegida = Dialogos.elegir(descripcionCastillo(), opciones.toArray(new String[0]));
             Dialogos.permitirGuardar(false);
-            if (elegida == 0) {
+            String opcion = opciones.get(elegida);
+
+            if (opcion.equals("Salir al bosque")) {
                 Dialogos.zona("El bosque");
                 ArrayList<Recuerdo> premio = crearPersonas();
+                premio.add(new RecuerdoDePersona("La voz de mamá", "Te llamaba para entrar a casa. Nunca supiste si estaba enojada o asustada."));
+                premio.add(new RecuerdoDeLugar("La casa de la infancia", "Un patio con baldosas rotas y una puerta que nunca cerraba bien."));
                 Collections.shuffle(premio);
                 jugador.agregarRecuerdo(premio.get(0));
                 Dialogos.mostrar("(El bosque todavía no está programado: se arma en el paso 14. Por ahora te llevás "
                         + premio.get(0).getNombre() + " y volvés al castillo.)");
+            } else if (opcion.equals("Acercarte a la puerta del ala este")) {
+                puertaEste();
+            } else if (opcion.equals("Acercarte a la puerta del ala oeste")) {
+                puertaOeste();
+            } else if (opcion.equals("Acercarte a la puerta enorme")) {
+                puertaJefe();
             }
         }
+    }
+
+    private void puertaEste() {
+        if (tieneRecuerdo("La casa de la infancia")) {
+            Dialogos.mostrar("Apoyás la mano en la madera y te acordás de un patio con baldosas rotas y una puerta que nunca cerraba bien. "
+                    + "Esta se abre sola.\n\n"
+                    + "Adentro personificada esa habitacion que te acoompaño por tantos años."
+                    + "hay una mesa, y sobre la mesa, una llave de hierro.");
+            jugador.setTieneLlave(true);
+            Dialogos.actualizarEstado(jugador);
+            Dialogos.mostrar("Tomás la llave del castillo. Cuando te das vuelta, la puerta ya no está.");
+        } else {
+            Dialogos.mostrar("Te acercás a la puerta de madera gastada. Cuando la abris solo se ve la nada misma.\n\n"
+                    + "Recuerdos, seguramente esa sea la clave. (Para entrar necesitás el Lugar \"La casa de la infancia\").");
+        }
+    }
+
+    private void puertaOeste() {
+        if (tieneRecuerdo("La voz de mamá")) {
+            Dialogos.mostrar("La voz vuelve a llamarte para entrar. Esta vez la reconocés.\n\n"
+                    + "La puerta se abre.");
+            jugador.setTieneRecuerdoClave(true);
+            Dialogos.actualizarEstado(jugador);
+            Dialogos.mostrar("Adentro te espera un último recuerdo: El último grito. La última ejecución antes de tu muerte. "
+                    + "El condenado gritó una sola palabra, y era tu nombre.\n\n"
+                    + "Cuando salís, la puerta ya no está.");
+        } else {
+            Dialogos.mostrar("Te acercás a la puerta de madera del ala oeste, idéntica a la del ala este. "
+                    + "Del otro lado se oye una voz, perdida en el fondo de tu alma.\n\n"
+                    + "Como en la puerta este, necesita un recuerdo. (Para entrar necesitás la Persona \"La voz de mamá\").");
+        }
+    }
+
+    private void puertaJefe() {
+        if (jugador.isTieneLlave() && jugador.isTieneRecuerdoClave()) {
+            boolean entrar = Dialogos.confirmar("La oscuridad se retira por completo. La puerta es enorme, de hierro negro, "
+                    + "y del otro lado alguien te espera desde hace mucho.\n\n"
+                    + "Tenés la llave y el recuerdo clave. ¿Entrás?");
+            if (entrar) {
+                Dialogos.mostrar("(El jefe final se programa mas adelante.)");
+            }
+        } else {
+            String faltan = "";
+            if (!jugador.isTieneLlave()) {
+                faltan = faltan + "\n- la llave del castillo";
+            }
+            if (!jugador.isTieneRecuerdoClave()) {
+                faltan = faltan + "\n- un recuerdo que todavía no tenés";
+            }
+            Dialogos.mostrar("Te acercás a la puerta enorme. La oscuridad no deja ver la mitad: solo distinguís una cerradura "
+                    + "de lado izquierdo, del otro lado... probablemente un recuerdo.\n\n(Para abrirla te falta:" + faltan + ")");
+        }
+    }
+
+    private boolean tieneRecuerdo(String nombre) {
+        for (Recuerdo recuerdo : jugador.getRecuerdos()) {
+            if (recuerdo.getNombre().equals(nombre)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void revelarPuertas() {
         int cantidad = jugador.getRecuerdos().size();
         if (puertasReveladas < 1 && cantidad >= 6) {
             puertasReveladas = 1;
-            Dialogos.mostrar("Al volver al castillo notas que el entorno se ve mas nitido, las sombras se van esclareciendo, el castillo tomando su forma original."
+            Dialogos.mostrar("Al volver al castillo notas que el entorno se ve mas nitido, las sombras se van esclareciendo, el castillo tomando su forma original. "
                     + "Las paredes asperas de piedras en forma de ladrillos, el suelo de un granito liso, resquebrajado y agrietado por los años.\n\n"
                     + "Pero no es todo, el castillo todavia es difuso en algunas zonas, fragmentos de sombra, una densa oscuridad infinita como la primera vez que despertaste, "
                     + "pareciera que intenta esconder algo.\n\n"
-                    + "En el ala este se descubre un a puerta de madera gastada, tanto o mas que el mismo castillo.");
+                    + "En el ala este se descubre una puerta de madera gastada, tanto o mas que el mismo castillo.");
         }
         if (puertasReveladas < 2 && cantidad >= 8) {
             puertasReveladas = 2;
-            Dialogos.mostrar("Otra vez el castillo cambió, ahora ves un techo aunque caido a pedazos, trozos de madera astillados balanceandose por hilos de fibras rotas."
+            Dialogos.mostrar("Otra vez el castillo cambió, ahora ves un techo aunque caido a pedazos, trozos de madera astillados balanceandose por hilos de fibras rotas. "
                     + "Las arañas sin velas oxidadas, las antorchas en las paredes reducidas a cenizas.\n\n"
-                    + "Al fondo, donde la oscuridad cesa a pesar de su amargura, se entrevé una puerta enorme."
+                    + "Al fondo, donde la oscuridad cesa a pesar de su amargura, se entrevé una puerta enorme. "
                     + "No llegas a verla en detalle, pero lo que espera al otro lado es evidentemente abrumador, desprende un aura de panico indescriptible para el verdugo. Como si en cierto punto supiese lo que le espera.");
         }
-        if  (puertasReveladas < 3 && cantidad >= 10) {
+        if (puertasReveladas < 3 && cantidad >= 10) {
             puertasReveladas = 3;
             Dialogos.mostrar("El castillo y todo su alrededor ya cobra el color y la vida (o lo que queda de ella) que deberia. Ya podes verlo casi como cuando lo veias con tus propios ojos en vida.\n\n"
                     + "En el ala oeste se revela una puerta de madera, identica a la del ala este, de ella se oye una voz perdida en el fondo de tu alma.");
@@ -118,16 +198,22 @@ public class Juego {
 
     private String descripcionCastillo() {
         if (puertasReveladas == 0) {
-            return "El castillo esta envuelto en niebla. Apenas se distinguen muros y diagonales."
+            return "El castillo esta envuelto en niebla. Apenas se distinguen muros y diagonales. "
                     + "Adentro no se ve nada.\n\nAfuera, el bosque espera.";
         }
         StringBuilder texto = new StringBuilder("La oscuridad cesa, se ven muros de piedra, un patio y corredores vacíos.");
-        texto.append("\n\nEn el ala este hay una puerta de madera maltratada por el tiempo.");
-        if (puertasReveladas >= 2) {
-            texto.append("\n\nAl fondo, en la oscuridad, se entrevé una puerta enorme.");
+        if (!jugador.isTieneLlave()) {
+            texto.append("\n\nEn el ala este hay una puerta de madera maltratada por el tiempo.");
         }
-        if (puertasReveladas >= 3) {
-            texto.append("\n\nEn el ala este hay una puerta identica a la del ala este, se oye una voz.");
+        if (puertasReveladas >= 2) {
+            if (jugador.isTieneLlave() && jugador.isTieneRecuerdoClave()) {
+                texto.append("\n\nAl fondo, la oscuridad ya no tapa nada: la puerta del jefe está a la vista, enorme, de hierro negro.");
+            } else {
+                texto.append("\n\nAl fondo, en la oscuridad, se entrevé una puerta enorme.");
+            }
+        }
+        if (puertasReveladas >= 3 && !jugador.isTieneRecuerdoClave()) {
+            texto.append("\n\nEn el ala oeste hay una puerta idéntica a la del ala este, se oye una voz.");
         }
         texto.append("\n\nAfuera, el bosque espera.");
         return texto.toString();
@@ -135,21 +221,19 @@ public class Juego {
 
     private void elegirRecuerdosIniciales() {
         Dialogos.zona("Tus recuerdos");
-        Dialogos.mostrar("Entre mas te acercas mas claro lo ves. Burbujas flotantes? Pequeñas burbujas flotantes de distintos colores, no una, muchas de ellas.\n\n"
-                + "Extrañado cual niño amagas a explotarlas hasta que observas figuras moviendose en el interior de cada una. Son tus recuerdos.");
+        Dialogos.mostrar("Te acercás a las burbujas. No son luces: son recuerdos. Tus recuerdos.\n\n"
+                + "Hay de cuatro tipos, tres de cada uno. De cada tipo vas a poder quedarte con uno solo.");
 
-        elegirUnoDe(crearHabilidades(), "Tres burbujas de color amarillo se acercan, como animandote a que las tomes.\n\n"
-                + "Dentro de cada una ves el recuerdo de algo que sabías hacer:");
-        Dialogos.mostrar("La burbuja se deshace en tus manos. Manos que recien te percatas que antes no sentias ni veias.\n"
-                + "La oscuridad ya no es tan espesa.");
+        elegirUnoDe(crearHabilidades(), "Tres burbujas se acercan. Adentro de cada una se mueve algo que sabías hacer:");
+        Dialogos.mostrar("La burbuja se deshace en tus manos. Alrededor, la oscuridad ya no es tan espesa.");
 
-        elegirUnoDe(crearPersonas(), "Otras tres burbujas se aproximan, esta vez de color azul. Adentro hay caras que conocías:");
-        Dialogos.mostrar("La oscuridad retrocede un poco más. Miras a tu alrededor sintiendote mas liviano, acostumbrandote al entorno.");
+        elegirUnoDe(crearPersonas(), "Otras tres burbujas. Adentro hay caras que conocías:");
+        Dialogos.mostrar("La oscuridad retrocede un poco más. Ahora distinguís el suelo bajo tus pies.");
 
-        elegirUnoDe(crearLugares(), "Tres burbujas más, verdes. Adentro hay lugares donde estuviste:");
-        Dialogos.mostrar("Ya no es una oscuridad infinita: frente a vos se dibuja, por lo menos, un intento de camino.");
+        elegirUnoDe(crearLugares(), "Tres burbujas más. Adentro hay lugares donde estuviste:");
+        Dialogos.mostrar("Ya no es una oscuridad infinita: frente a vos se dibuja, por lo menos, un camino.");
 
-        elegirUnoDe(crearTraumas(), "Quedan tres burbujas, más oscuras que las demás, rojas. Ya sabes lo que hacer, aunque en este caso cuesta un poco más:");
+        elegirUnoDe(crearTraumas(), "Quedan tres burbujas, más oscuras que las demás. Sabés que tenés que agarrar una:");
         Dialogos.mostrar("Este recuerdo duele. Desde ahora, el " + Dialogos.nombreElemento(jugador.getDebilidad()).toLowerCase()
                 + " te hace más daño: es tu debilidad.");
     }
@@ -176,7 +260,7 @@ public class Juego {
 
     private ArrayList<Recuerdo> crearHabilidades() {
         ArrayList<Recuerdo> habilidades = new ArrayList<>();
-        habilidades.add(new RecuerdoDeHabilidad("Hachazo ardiente", "El filo del hacha seprende fuego y corta quemando la carne.", Elemento.FUEGO));
+        habilidades.add(new RecuerdoDeHabilidad("Hachazo ardiente", "El filo del hacha se prende fuego y corta quemando la carne.", Elemento.FUEGO));
         habilidades.add(new RecuerdoDeHabilidad("Lluvia de brasas", "Arrojás un puñado de brasas encendidas que se pegan a la piel del enemigo.", Elemento.FUEGO));
         habilidades.add(new RecuerdoDeHabilidad("Ahogamiento", "Una mano de agua helada le aprieta la garganta al enemigo hasta dejarlo sin aire.", Elemento.AGUA));
         habilidades.add(new RecuerdoDeHabilidad("Látigo de agua", "Un chorro de agua golpea como un látigo y abre la piel donde pega.", Elemento.AGUA));
@@ -189,7 +273,7 @@ public class Juego {
 
     private ArrayList<Recuerdo> crearPersonas() {
         ArrayList<Recuerdo> personas = new ArrayList<>();
-        personas.add(new RecuerdoDePersona("El abrazo de la abuela", "Olía a pan y a jabón, y siempre duraba un poco más de lo necesario."));
+        personas.add(new RecuerdoDePersona("El abrazo de la abuela", "Olía a pan y a jabón, y duraba un poco más de lo necesario."));
         personas.add(new RecuerdoDePersona("El amigo del barrio", "Siempre te esperaba en la esquina, aunque llegaras tarde."));
         personas.add(new RecuerdoDePersona("La tutora", "Te enseñó a leer despacio, sin apurarte nunca."));
         personas.add(new RecuerdoDePersona("El hermano menor", "Te seguía a todos lados, y vos fingías que te molestaba."));
@@ -198,8 +282,9 @@ public class Juego {
 
     private ArrayList<Recuerdo> crearLugares() {
         ArrayList<Recuerdo> lugares = new ArrayList<>();
+        lugares.add(new RecuerdoDeLugar("El hogar", "Una mesa con el pan todavía tibio, el fuego prendido en la chimenea y alguien que te esperaba despierto."));
         lugares.add(new RecuerdoDeLugar("La plaza del barrio", "Hamacas que chirriaban y un banco donde el tiempo no pasaba."));
-        lugares.add(new RecuerdoDeLugar("Tu hogar", "Una puerta que siempre estaba abierta para vos y una compañia indispensable."));
+        lugares.add(new RecuerdoDeLugar("El mar en verano", "Arena caliente, sal en la boca y el ruido de las olas de fondo."));
         lugares.add(new RecuerdoDeLugar("La biblioteca vieja", "Silencio, polvo y la luz de la tarde entrando por los vitrales."));
         lugares.add(new RecuerdoDeLugar("La cocina de la abuela", "Una olla al fuego desde temprano y la radio siempre prendida."));
         return lugares;
@@ -207,15 +292,10 @@ public class Juego {
 
     private ArrayList<Recuerdo> crearTraumas() {
         ArrayList<Recuerdo> traumas = new ArrayList<>();
-        traumas.add(new RecuerdoDeTrauma("La hoguera", "Ataste al condenado al poste y encendiste la leña. Todavía escuchas el crepitar.", Elemento.FUEGO));
-        traumas.add(new RecuerdoDeTrauma("El río helado", "Lo sostuviste bajo el agua hasta que dejó de moverse. El frio te quedó en las manos para siempre.", Elemento.AGUA));
-        traumas.add(new RecuerdoDeTrauma("La jaula de la torre", "Lo dejaste encerrado en la soledad de la noche. Esa noche hubo tormenta.", Elemento.RAYO));
-        traumas.add(new RecuerdoDeTrauma("La copa", "Le serviste la copa y lo miraste a los ojos mietras bebía. Amobs ya sabían el fin de ese trago.", Elemento.VENENO));
+        traumas.add(new RecuerdoDeTrauma("La hoguera", "Ataste al condenado al poste y encendiste la leña. Todavía escuchás el crepitar cuando cerrás los ojos.", Elemento.FUEGO));
+        traumas.add(new RecuerdoDeTrauma("El río helado", "Lo sostuviste bajo el agua hasta que dejó de moverse. El frío te quedó en las manos para siempre.", Elemento.AGUA));
+        traumas.add(new RecuerdoDeTrauma("La jaula de la torre", "Lo dejaste encerrado en una jaula de hierro en lo alto de la torre. Esa noche hubo tormenta.", Elemento.RAYO));
+        traumas.add(new RecuerdoDeTrauma("La copa", "Le serviste la copa y lo miraste beber. Sabía lo que era, y la bebió igual.", Elemento.VENENO));
         return traumas;
-    }
-
-    private Elemento elementoAlAzar() {
-        Elemento[] elementos = Elemento.values();
-        return elementos[(int) (Math.random() * elementos.length)];
     }
 }
