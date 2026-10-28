@@ -11,6 +11,6 @@ public class EnemigoBase extends Enemigo {
 
     @Override
     public void infligirDaño(Personaje personaje) {
-
+        personaje.recibirDaño(daño, elemento);
     }
 }

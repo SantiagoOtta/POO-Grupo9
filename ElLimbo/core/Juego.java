@@ -1,11 +1,17 @@
 package core;
 
+import enemigos.Enemigo;
+import excepciones.DisolucionException;
+import excepciones.RecuerdoPerdidoException;
+import enemigos.EnemigoBase;
+import enemigos.GrupoDeEnemigos;
 import npcs.Mercader;
 import recuerdos.Recuerdo;
 import recuerdos.RecuerdoDeHabilidad;
 import recuerdos.RecuerdoDeLugar;
 import recuerdos.RecuerdoDePersona;
 import recuerdos.RecuerdoDeTrauma;
+import recuerdos.Reutilizable;
 import ui.Dialogos;
 
 import java.util.ArrayList;
@@ -44,15 +50,16 @@ public class Juego {
     }
 
     public void otorgarRecompensa(Personaje personaje) {
-
+        otorgarRecompensa(personaje, null);
     }
 
     public Escena generarBosque() {
-        return null;
+        int escenas = 3 + (int) (Math.random() * 2);
+        return new Escena(caminosHacia(escenas, new ArrayList<>()), null);
     }
 
     public void guardarPartida() {
-        Dialogos.avisar("El guardado se programa en el paso 21: todavía no se guarda nada.");
+        Dialogos.avisar("El guardado se programa más adelante: todavía no se guarda nada.");
     }
 
     public boolean cargarPartida() {
@@ -93,14 +100,16 @@ public class Juego {
             String opcion = opciones.get(elegida);
 
             if (opcion.equals("Salir al bosque")) {
-                Dialogos.zona("El bosque");
-                ArrayList<Recuerdo> premio = crearPersonas();
-                premio.add(new RecuerdoDePersona("La voz de mamá", "Te llamaba para entrar a casa. Nunca supiste si estaba enojada o asustada."));
-                premio.add(new RecuerdoDeLugar("La casa de la infancia", "Un patio con baldosas rotas y una puerta que nunca cerraba bien."));
-                Collections.shuffle(premio);
-                jugador.agregarRecuerdo(premio.get(0));
-                Dialogos.mostrar("(El bosque todavía no está programado: se arma en el paso 14. Por ahora te llevás "
-                        + premio.get(0).getNombre() + " y volvés al castillo.)");
+                try {
+                    recorrerBosque();
+                } catch (DisolucionException e) {
+                    Dialogos.zona("La niebla");
+                    Dialogos.actualizarEstado(jugador);
+                    Dialogos.mostrar(e.getMessage());
+                } catch (RecuerdoPerdidoException e) {
+                    muerteDefinitiva(e.getMessage());
+                    enElJuego = false;
+                }
             } else if (opcion.equals("Acercarte a la puerta del ala este")) {
                 puertaEste();
             } else if (opcion.equals("Acercarte a la puerta del ala oeste")) {
@@ -115,14 +124,13 @@ public class Juego {
         if (tieneRecuerdo("La casa de la infancia")) {
             Dialogos.mostrar("Apoyás la mano en la madera y te acordás de un patio con baldosas rotas y una puerta que nunca cerraba bien. "
                     + "Esta se abre sola.\n\n"
-                    + "Adentro personificada esa habitacion que te acoompaño por tantos años."
-                    + "hay una mesa, y sobre la mesa, una llave de hierro.");
+                    + "Adentro hay una mesa, y sobre la mesa, una llave de hierro.");
             jugador.setTieneLlave(true);
             Dialogos.actualizarEstado(jugador);
             Dialogos.mostrar("Tomás la llave del castillo. Cuando te das vuelta, la puerta ya no está.");
         } else {
-            Dialogos.mostrar("Te acercás a la puerta de madera gastada. Cuando la abris solo se ve la nada misma.\n\n"
-                    + "Recuerdos, seguramente esa sea la clave. (Para entrar necesitás el Lugar \"La casa de la infancia\").");
+            Dialogos.mostrar("Te acercás a la puerta de madera gastada. Está trabada: no se abre.\n\n"
+                    + "Sentís que se abre con un recuerdo. Para entrar necesitás el Lugar \"La casa de la infancia\".");
         }
     }
 
@@ -138,7 +146,7 @@ public class Juego {
         } else {
             Dialogos.mostrar("Te acercás a la puerta de madera del ala oeste, idéntica a la del ala este. "
                     + "Del otro lado se oye una voz, perdida en el fondo de tu alma.\n\n"
-                    + "Como en la puerta este, necesita un recuerdo. (Para entrar necesitás la Persona \"La voz de mamá\").");
+                    + "Sentís que se abre con un recuerdo. Para entrar necesitás la Persona \"La voz de mamá\".");
         }
     }
 
@@ -148,7 +156,7 @@ public class Juego {
                     + "y del otro lado alguien te espera desde hace mucho.\n\n"
                     + "Tenés la llave y el recuerdo clave. ¿Entrás?");
             if (entrar) {
-                Dialogos.mostrar("(El jefe final se programa mas adelante.)");
+                Dialogos.mostrar("(El jefe final se programa más adelante. Por ahora volvés al patio del castillo.)");
             }
         } else {
             String faltan = "";
@@ -158,9 +166,291 @@ public class Juego {
             if (!jugador.isTieneRecuerdoClave()) {
                 faltan = faltan + "\n- un recuerdo que todavía no tenés";
             }
-            Dialogos.mostrar("Te acercás a la puerta enorme. La oscuridad no deja ver la mitad: solo distinguís una cerradura "
-                    + "de lado izquierdo, del otro lado... probablemente un recuerdo.\n\n(Para abrirla te falta:" + faltan + ")");
+            Dialogos.mostrar("Te acercás a la puerta enorme. La oscuridad no te deja verla entera: solo distinguís una cerradura "
+                    + "y, al lado, un hueco donde parece que va un recuerdo.\n\nPara abrirla te falta:" + faltan);
         }
+    }
+
+    private void recorrerBosque() throws DisolucionException, RecuerdoPerdidoException {
+        jugador.reiniciarResistencias();
+        Dialogos.zona("El bosque");
+        Dialogos.mostrar("Salís del castillo y la niebla se cierra detrás de tus pasos. "
+                + "No hay vuelta atrás hasta llegar al final del bosque.");
+        Escena bosque = generarBosque();
+        boolean sobreviviste = bosque.resolver(jugador);
+        if (sobreviviste) {
+            Dialogos.zona("El Castillo");
+            Dialogos.mostrar("Entre los árboles vuelve a recortarse el castillo. Volvés a refugiarte.");
+        } else {
+            jugador.disolver();
+        }
+    }
+
+    private ArrayList<Opcion> caminosHacia(int restantes, ArrayList<String> usados) {
+        ArrayList<Opcion> opciones = new ArrayList<>();
+        if (restantes == 0) {
+            opciones.add(new Opcion("Volver al castillo"));
+            return opciones;
+        }
+        int cantidad = 1 + (int) (Math.random() * 3);
+        for (int i = 0; i < cantidad; i++) {
+            ArrayList<String> usadosEnEsteCamino = new ArrayList<>(usados);
+            Interactuable encuentro = sortearEncuentro(usadosEnEsteCamino);
+            Escena escena = new Escena(caminosHacia(restantes - 1, usadosEnEsteCamino), encuentro);
+            opciones.add(new Opcion(nombreDeCamino(i, cantidad), null, escena));
+        }
+        return opciones;
+    }
+
+    private String nombreDeCamino(int numero, int cantidad) {
+        if (cantidad == 1) {
+            return "Seguir el sendero";
+        }
+        if (cantidad == 2) {
+            String[] nombres = {"Camino de la izquierda", "Camino de la derecha"};
+            return nombres[numero];
+        }
+        String[] nombres = {"Camino de la izquierda", "Camino del medio", "Camino de la derecha"};
+        return nombres[numero];
+    }
+
+    private Interactuable sortearEncuentro(ArrayList<String> usados) {
+        double azar = Math.random();
+        String tipo;
+        if (azar < 0.50) {
+            tipo = "combate";
+        } else if (azar < 0.65) {
+            tipo = "ladron";
+        } else if (azar < 0.80) {
+            tipo = "mercader";
+        } else if (azar < 0.90) {
+            tipo = "guardian";
+        } else {
+            tipo = "claro";
+        }
+        if (!tipo.equals("combate") && usados.contains(tipo)) {
+            tipo = "combate";
+        }
+        usados.add(tipo);
+
+        switch (tipo) {
+            case "ladron":
+                return personaje -> encuentroTemporal("el Ladrón de Recuerdos");
+            case "mercader":
+                return personaje -> encuentroTemporal("el Mercader");
+            case "guardian":
+                return personaje -> encuentroTemporal("el Guardián de Recuerdos");
+            case "claro":
+                return personaje -> claroEnCalma();
+            default:
+                return personaje -> combateDelBosque();
+        }
+    }
+
+    private boolean encuentroTemporal(String quien) {
+        Dialogos.zona("El bosque");
+        Dialogos.mostrar("(Acá te cruzarías con " + quien + ": se programa más adelante.)");
+        return true;
+    }
+
+    private boolean claroEnCalma() {
+        Dialogos.zona("Un claro en calma");
+        int vidaAntes = jugador.getVida();
+        int cura = jugador.getVidaMaxima() * 15 / 100;
+        jugador.setVida(Math.min(jugador.getVidaMaxima(), jugador.getVida() + cura));
+        Dialogos.actualizarEstado(jugador);
+        Dialogos.mostrar("Los árboles se abren en un claro. No hay niebla, no hay sombras: solo silencio y un poco de luz.\n\n"
+                + "Te sentás un rato. Recuperás " + (jugador.getVida() - vidaAntes) + " de vida.");
+        return true;
+    }
+
+    private boolean combateDelBosque() {
+        boolean masFuertes = jugador.getRecuerdos().size() >= 12 && Math.random() < 0.5;
+        ArrayList<Enemigo> sombras = new ArrayList<>();
+        int cantidad = 1 + (int) (Math.random() * 3);
+        for (int i = 0; i < cantidad; i++) {
+            sombras.add(crearSombra(masFuertes));
+        }
+        if (masFuertes) {
+            Dialogos.zona("El bosque");
+            Dialogos.mostrar("La niebla se vuelve más espesa. Las sombras de este lado del bosque son más densas, más grandes.");
+        }
+        GrupoDeEnemigos combate = new GrupoDeEnemigos(sombras);
+        boolean ganaste = combate.interactuar(jugador);
+        if (ganaste) {
+            darMonedas(sombras.size());
+            Elemento tendencia = sombras.get((int) (Math.random() * sombras.size())).getElemento();
+            otorgarRecompensa(jugador, tendencia);
+        }
+        return ganaste;
+    }
+
+    private void muerteDefinitiva(String mensaje) {
+        Dialogos.zona("El final");
+        Dialogos.actualizarEstado(jugador);
+        Dialogos.mostrar(mensaje);
+        Dialogos.mostrar("El Verdugo se apaga en la oscuridad del Limbo, sin nada que recordar. La run termina.\n\n"
+                + "(Empezar una run nueva se programa más adelante.)");
+    }
+
+    private void darMonedas(int cantidadEnemigos) {
+        int monedas;
+        switch (cantidadEnemigos) {
+            case 1:
+                monedas = 10 + (int) (Math.random() * 6);
+                break;
+            case 2:
+                monedas = 20 + (int) (Math.random() * 6);
+                break;
+            default:
+                monedas = 30 + (int) (Math.random() * 11);
+        }
+        jugador.setMonedas(jugador.getMonedas() + monedas);
+        Dialogos.zona("Después del combate");
+        Dialogos.actualizarEstado(jugador);
+        Dialogos.mostrar("Las Sombras se deshacen en humo. Entre la ceniza quedan " + monedas + " monedas.");
+    }
+
+    private void otorgarRecompensa(Personaje personaje, Elemento tendencia) {
+        Recuerdo nuevo = recuerdoNuevo(tendencia);
+        ArrayList<Recuerdo> gastados = recuerdosGastados(personaje);
+
+        ArrayList<String> opciones = new ArrayList<>();
+        String texto = "Entre el humo flota una burbuja de luz.";
+        if (nuevo != null) {
+            opciones.add("Quedarte con el recuerdo");
+            texto = texto + " Adentro se mueve un recuerdo:\n\n" + nombreConDetalle(nuevo) + ": " + nuevo.getDescripcion();
+        }
+        if (!gastados.isEmpty()) {
+            opciones.add("Usar la luz para recargar un recuerdo");
+        }
+        if (opciones.isEmpty()) {
+            Dialogos.mostrar("Entre el humo no queda nada más: no hay recuerdos nuevos ni nada que recargar.");
+            return;
+        }
+
+        int elegida = Dialogos.elegir(texto, opciones.toArray(new String[0]));
+        if (opciones.get(elegida).equals("Quedarte con el recuerdo")) {
+            int bonusAntes = personaje.getBonusDaño();
+            personaje.agregarRecuerdo(nuevo);
+            Dialogos.actualizarEstado(personaje);
+            String mensaje = "La burbuja se deshace en tus manos. Ahora " + nuevo.getNombre() + " es tuyo.";
+            if (personaje.getBonusDaño() > bonusAntes) {
+                mensaje = mensaje + "\n\nCon cada recuerdo que juntás te sentís más entero: "
+                        + "+5 de vida máxima y +2 de daño.";
+            }
+            Dialogos.mostrar(mensaje);
+        } else {
+            String[] botones = new String[gastados.size()];
+            for (int i = 0; i < gastados.size(); i++) {
+                Recuerdo recuerdo = gastados.get(i);
+                botones[i] = recuerdo.getNombre() + " · " + ((Reutilizable) recuerdo).getUsosRestantes() + "/3 usos";
+            }
+            int elegido = Dialogos.elegir("¿Qué recuerdo querés recargar?", botones);
+            Recuerdo recargado = gastados.get(elegido);
+            ((Reutilizable) recargado).setUsosRestantes(3);
+            Dialogos.actualizarEstado(personaje);
+            Dialogos.mostrar("La luz entra en " + recargado.getNombre() + " y el recuerdo vuelve a estar entero: 3/3 usos.");
+        }
+    }
+
+    private Recuerdo recuerdoNuevo(Elemento tendencia) {
+        ArrayList<Recuerdo> posibles = new ArrayList<>();
+        for (Recuerdo recuerdo : todosLosRecuerdos()) {
+            if (!tieneRecuerdo(recuerdo.getNombre())) {
+                posibles.add(recuerdo);
+            }
+        }
+        if (posibles.isEmpty()) {
+            return null;
+        }
+        if (tendencia != null && Math.random() < 0.5) {
+            ArrayList<Recuerdo> delElemento = new ArrayList<>();
+            for (Recuerdo recuerdo : posibles) {
+                if (elementoDe(recuerdo) == tendencia) {
+                    delElemento.add(recuerdo);
+                }
+            }
+            if (!delElemento.isEmpty()) {
+                posibles = delElemento;
+            }
+        }
+        return posibles.get((int) (Math.random() * posibles.size()));
+    }
+
+    private ArrayList<Recuerdo> todosLosRecuerdos() {
+        ArrayList<Recuerdo> todos = new ArrayList<>();
+        todos.addAll(crearHabilidades());
+        todos.addAll(crearPersonas());
+        todos.addAll(crearLugares());
+        todos.addAll(crearTraumas());
+        todos.add(new RecuerdoDePersona("La voz de mamá", "Te llamaba para entrar a casa. Nunca supiste si estaba enojada o asustada."));
+        todos.add(new RecuerdoDeLugar("La casa de la infancia", "Un patio con baldosas rotas y una puerta que nunca cerraba bien."));
+        return todos;
+    }
+
+    private ArrayList<Recuerdo> recuerdosGastados(Personaje personaje) {
+        ArrayList<Recuerdo> gastados = new ArrayList<>();
+        for (Recuerdo recuerdo : personaje.getRecuerdos()) {
+            if (recuerdo instanceof Reutilizable && ((Reutilizable) recuerdo).getUsosRestantes() < 3) {
+                gastados.add(recuerdo);
+            }
+        }
+        return gastados;
+    }
+
+    private Elemento elementoDe(Recuerdo recuerdo) {
+        if (recuerdo instanceof RecuerdoDeHabilidad) {
+            return ((RecuerdoDeHabilidad) recuerdo).getElemento();
+        }
+        if (recuerdo instanceof RecuerdoDeTrauma) {
+            return ((RecuerdoDeTrauma) recuerdo).getElemento();
+        }
+        return null;
+    }
+
+    private String nombreConDetalle(Recuerdo recuerdo) {
+        if (recuerdo instanceof RecuerdoDeHabilidad) {
+            RecuerdoDeHabilidad habilidad = (RecuerdoDeHabilidad) recuerdo;
+            String alcance = habilidad.isEnArea() ? ", a todos" : ", a uno";
+            return "⚔ " + habilidad.getNombre() + " (" + Dialogos.nombreElemento(habilidad.getElemento()) + alcance + ")";
+        }
+        if (recuerdo instanceof RecuerdoDeTrauma) {
+            return "✶ " + recuerdo.getNombre() + " (" + Dialogos.nombreElemento(((RecuerdoDeTrauma) recuerdo).getElemento()) + ", uso único)";
+        }
+        if (recuerdo instanceof RecuerdoDePersona) {
+            return "♥ " + recuerdo.getNombre() + " (Persona: protege)";
+        }
+        return "⌂ " + recuerdo.getNombre() + " (Lugar: cura)";
+    }
+
+    private Enemigo crearSombra(boolean masFuerte) {
+        Elemento elemento = elementoAlAzar();
+        int vida = 25 + (int) (Math.random() * 16);
+        int daño = 8 + (int) (Math.random() * 5);
+        if (masFuerte) {
+            vida = vida * 115 / 100;
+            daño = daño + 2 + (int) (Math.random() * 2);
+        }
+        return new EnemigoBase(elemento, vida, debilidadDe(elemento), daño);
+    }
+
+    private Elemento debilidadDe(Elemento elemento) {
+        switch (elemento) {
+            case FUEGO:
+                return Elemento.AGUA;
+            case AGUA:
+                return Elemento.RAYO;
+            case RAYO:
+                return Elemento.VENENO;
+            default:
+                return Elemento.FUEGO;
+        }
+    }
+
+    private Elemento elementoAlAzar() {
+        Elemento[] elementos = Elemento.values();
+        return elementos[(int) (Math.random() * elementos.length)];
     }
 
     private boolean tieneRecuerdo(String nombre) {
@@ -246,7 +536,9 @@ public class Juego {
             Recuerdo recuerdo = opciones.get(i);
             String nombre = recuerdo.getNombre();
             if (recuerdo instanceof RecuerdoDeHabilidad) {
-                nombre = nombre + " (" + Dialogos.nombreElemento(((RecuerdoDeHabilidad) recuerdo).getElemento()) + ")";
+                RecuerdoDeHabilidad habilidad = (RecuerdoDeHabilidad) recuerdo;
+                String alcance = habilidad.isEnArea() ? ", a todos" : ", a uno";
+                nombre = nombre + " (" + Dialogos.nombreElemento(habilidad.getElemento()) + alcance + ")";
             } else if (recuerdo instanceof RecuerdoDeTrauma) {
                 nombre = nombre + " (" + Dialogos.nombreElemento(((RecuerdoDeTrauma) recuerdo).getElemento()) + ")";
             }
@@ -260,14 +552,14 @@ public class Juego {
 
     private ArrayList<Recuerdo> crearHabilidades() {
         ArrayList<Recuerdo> habilidades = new ArrayList<>();
-        habilidades.add(new RecuerdoDeHabilidad("Hachazo ardiente", "El filo del hacha se prende fuego y corta quemando la carne.", Elemento.FUEGO));
-        habilidades.add(new RecuerdoDeHabilidad("Lluvia de brasas", "Arrojás un puñado de brasas encendidas que se pegan a la piel del enemigo.", Elemento.FUEGO));
-        habilidades.add(new RecuerdoDeHabilidad("Ahogamiento", "Una mano de agua helada le aprieta la garganta al enemigo hasta dejarlo sin aire.", Elemento.AGUA));
-        habilidades.add(new RecuerdoDeHabilidad("Látigo de agua", "Un chorro de agua golpea como un látigo y abre la piel donde pega.", Elemento.AGUA));
-        habilidades.add(new RecuerdoDeHabilidad("Golpe de tormenta", "Levantás el hacha al cielo y un rayo cae de lleno sobre el enemigo.", Elemento.RAYO));
-        habilidades.add(new RecuerdoDeHabilidad("Relámpago", "Un relámpago corto salta de tu mano y atraviesa al enemigo de lado a lado.", Elemento.RAYO));
-        habilidades.add(new RecuerdoDeHabilidad("Filo envenenado", "La hoja del hacha está untada en veneno, y cada corte sigue quemando por dentro.", Elemento.VENENO));
-        habilidades.add(new RecuerdoDeHabilidad("Niebla tóxica", "Una nube verdosa envuelve al enemigo y le quema los pulmones al respirar.", Elemento.VENENO));
+        habilidades.add(new RecuerdoDeHabilidad("Hachazo ardiente", "El filo del hacha se prende fuego y corta quemando la carne.", Elemento.FUEGO, false));
+        habilidades.add(new RecuerdoDeHabilidad("Lluvia de brasas", "Arrojás un puñado de brasas encendidas que se pegan a la piel de todos los enemigos.", Elemento.FUEGO, true));
+        habilidades.add(new RecuerdoDeHabilidad("Ahogamiento", "Una mano de agua helada le aprieta la garganta al enemigo hasta dejarlo sin aire.", Elemento.AGUA, false));
+        habilidades.add(new RecuerdoDeHabilidad("Látigo de agua", "Un chorro de agua barre el campo como un látigo y abre la piel de todos los que alcanza.", Elemento.AGUA, true));
+        habilidades.add(new RecuerdoDeHabilidad("Golpe de tormenta", "Levantás el hacha al cielo y la tormenta descarga sus rayos sobre todos los enemigos.", Elemento.RAYO, true));
+        habilidades.add(new RecuerdoDeHabilidad("Relámpago", "Un relámpago corto salta de tu mano y atraviesa al enemigo de lado a lado.", Elemento.RAYO, false));
+        habilidades.add(new RecuerdoDeHabilidad("Filo envenenado", "La hoja del hacha está untada en veneno, y cada corte sigue quemando por dentro.", Elemento.VENENO, false));
+        habilidades.add(new RecuerdoDeHabilidad("Niebla tóxica", "Una nube verdosa envuelve a los enemigos y les quema los pulmones al respirar.", Elemento.VENENO, true));
         return habilidades;
     }
 

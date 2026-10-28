@@ -4,6 +4,8 @@ import core.Elemento;
 import core.Interactuable;
 import core.Personaje;
 
+import java.util.ArrayList;
+
 public abstract class Enemigo implements Interactuable {
 
     protected Elemento elemento;
@@ -20,18 +22,43 @@ public abstract class Enemigo implements Interactuable {
         this.daño = daño;
     }
 
+    public Elemento getElemento() {
+        return elemento;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public int getVidaMaxima() {
+        return vidaMaxima;
+    }
+
+    public Elemento getDebilidad() {
+        return debilidad;
+    }
+
     @Override
     public boolean interactuar(Personaje personaje) {
-        return false;
+        ArrayList<Enemigo> soloEste = new ArrayList<>();
+        soloEste.add(this);
+        GrupoDeEnemigos grupo = new GrupoDeEnemigos(soloEste);
+        return grupo.interactuar(personaje);
     }
 
     public abstract void infligirDaño(Personaje personaje);
 
     public void recibirDaño(int cantidad, Elemento elementoAtaque) {
-
+        if (elementoAtaque != null && elementoAtaque == debilidad) {
+            cantidad = cantidad * 3 / 2;
+        }
+        vida = vida - cantidad;
+        if (vida < 0) {
+            vida = 0;
+        }
     }
 
     public boolean sigueEnCombate() {
-        return false;
+        return vida > 0;
     }
 }

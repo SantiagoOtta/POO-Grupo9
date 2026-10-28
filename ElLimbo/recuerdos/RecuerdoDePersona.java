@@ -4,7 +4,7 @@ import core.Personaje;
 
 public class RecuerdoDePersona extends Recuerdo implements Reutilizable {
 
-    public int usosRestantes;
+    private int usosRestantes;
 
     public RecuerdoDePersona(String nombre, String descripcion) {
         super(nombre, descripcion);
@@ -12,20 +12,27 @@ public class RecuerdoDePersona extends Recuerdo implements Reutilizable {
     }
 
     @Override
-    public void activar (Personaje personaje) {
-
+    public void activar(Personaje personaje) {
+        int porcentaje = usosRestantes * 25;
+        personaje.setResistenciaTemporal(personaje.getDebilidad());
+        if (porcentaje > personaje.getPorcentajeResistenciaTemporal()) {
+            personaje.setPorcentajeResistenciaTemporal(porcentaje);
+        }
+        usosRestantes--;
     }
 
     @Override
     public boolean quedanUsos() {
-        return false;
+        return usosRestantes > 0;
     }
 
     @Override
     public int getUsosRestantes() {
-        return 0;
+        return usosRestantes;
     }
 
     @Override
-    public void setUsosRestantes(int usosRestantes) {}
+    public void setUsosRestantes(int usosRestantes) {
+        this.usosRestantes = usosRestantes;
+    }
 }
