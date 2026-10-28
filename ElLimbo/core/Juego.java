@@ -560,6 +560,14 @@ public class Juego {
         habilidades.add(new RecuerdoDeHabilidad("Relámpago", "Un relámpago corto salta de tu mano y atraviesa al enemigo de lado a lado.", Elemento.RAYO, false));
         habilidades.add(new RecuerdoDeHabilidad("Filo envenenado", "La hoja del hacha está untada en veneno, y cada corte sigue quemando por dentro.", Elemento.VENENO, false));
         habilidades.add(new RecuerdoDeHabilidad("Niebla tóxica", "Una nube verdosa envuelve a los enemigos y les quema los pulmones al respirar.", Elemento.VENENO, true));
+        habilidades.add(new RecuerdoDeHabilidad("Nido de víboras", "Soltás un saco de víboras a los pies del enemigo. Lo rodean y lo muerden hasta que cae.", Elemento.VENENO, false));
+        habilidades.add(new RecuerdoDeHabilidad("Cadena de tormenta", "Lanzás una cadena de hierro contra el enemigo y un rayo la recorre de punta a punta, sacudiéndolo hasta los huesos.", Elemento.RAYO, false));
+        habilidades.add(new RecuerdoDeHabilidad("Aguja de agua", "Concentrás el agua en un hilo finísimo y la disparás con tanta fuerza que atraviesa la armadura y la carne como una aguja.", Elemento.AGUA, false));
+        habilidades.add(new RecuerdoDeHabilidad("Brea ardiente", "Arrojás brea encendida que se le pega al cuerpo y no se apaga por más que se sacuda.", Elemento.FUEGO, false));
+        habilidades.add(new RecuerdoDeHabilidad("Muro de llamas", "Levantás una pared de fuego que avanza y quema a todos los que encuentra a su paso.", Elemento.FUEGO, true));
+        habilidades.add(new RecuerdoDeHabilidad("Marea negra", "Una ola oscura inunda el campo y arrastra a todos los enemigos a la vez.", Elemento.AGUA, true));
+        habilidades.add(new RecuerdoDeHabilidad("Tormenta de hierro", "Clavás cadenas en el suelo y el rayo salta de una a otra, golpeando a todos los que tocan.", Elemento.RAYO, true));
+        habilidades.add(new RecuerdoDeHabilidad("Humo de hierbas", "Quemás un puñado de hierbas venenosas y el humo se mete en los pulmones de todos.", Elemento.VENENO, true));
         return habilidades;
     }
 
@@ -569,6 +577,10 @@ public class Juego {
         personas.add(new RecuerdoDePersona("El amigo del barrio", "Siempre te esperaba en la esquina, aunque llegaras tarde."));
         personas.add(new RecuerdoDePersona("La tutora", "Te enseñó a leer despacio, sin apurarte nunca."));
         personas.add(new RecuerdoDePersona("El hermano menor", "Te seguía a todos lados, y vos fingías que te molestaba."));
+        personas.add(new RecuerdoDePersona("El maestro", "Te enseñó a sostener el hacha sin que te temblara el pulso y a no dejar nunca una mancha. Su voz áspera fue lo más parecido a un padre que tuviste."));
+        personas.add(new RecuerdoDePersona("El sacerdote", "Te escuchaba en la penumbra sin hacer preguntas ni juzgarte. Era de los pocos que te hablaban como a una persona."));
+        personas.add(new RecuerdoDePersona("La condenada que lo perdonó", "Antes de que bajaras el hacha te dijo que no te odiaba. Nadie más volvió a decirte algo así."));
+        personas.add(new RecuerdoDePersona("El carcelero", "Compartía su pan duro contigo sin decir una palabra. Era el único que entendía lo que pesaba el oficio."));
         return personas;
     }
 
@@ -579,6 +591,10 @@ public class Juego {
         lugares.add(new RecuerdoDeLugar("El mar en verano", "Arena caliente, sal en la boca y el ruido de las olas de fondo."));
         lugares.add(new RecuerdoDeLugar("La biblioteca vieja", "Silencio, polvo y la luz de la tarde entrando por los vitrales."));
         lugares.add(new RecuerdoDeLugar("La cocina de la abuela", "Una olla al fuego desde temprano y la radio siempre prendida."));
+        lugares.add(new RecuerdoDeLugar("La capilla vacía", "Bancos vacíos, olor a cera y un silencio donde por fin nadie te miraba. Rezabas antes de cada ejecución, aunque nunca supiste a quién."));
+        lugares.add(new RecuerdoDeLugar("El cuarto compartido", "Una manta áspera, el murmullo de tus hermanos hablando bajito en la oscuridad y el calor de dormir todos juntos."));
+        lugares.add(new RecuerdoDeLugar("El árbol del patio", "Una rama alta donde nadie te alcanzaba, el mundo chiquito allá abajo y toda la tarde por delante."));
+        lugares.add(new RecuerdoDeLugar("El taller del maestro", "Olor a aceite, el filo del hacha en la piedra y una lámpara que ardía hasta tarde. Ahí aprendiste a hacer tu trabajo sin dejarte llevar por lo que sentían los condenados. Cuando salía bien, tu maestro asentía con la cabeza, y con eso alcanzaba."));
         return lugares;
     }
 
@@ -588,6 +604,10 @@ public class Juego {
         traumas.add(new RecuerdoDeTrauma("El río helado", "Lo sostuviste bajo el agua hasta que dejó de moverse. El frío te quedó en las manos para siempre.", Elemento.AGUA));
         traumas.add(new RecuerdoDeTrauma("La jaula de la torre", "Lo dejaste encerrado en una jaula de hierro en lo alto de la torre. Esa noche hubo tormenta.", Elemento.RAYO));
         traumas.add(new RecuerdoDeTrauma("La copa", "Le serviste la copa y lo miraste beber. Sabía lo que era, y la bebió igual.", Elemento.VENENO));
+        traumas.add(new RecuerdoDeTrauma("La pira del maestro", "Tu maestro, el verdugo que te enseñó todo, murió, y el pueblo quemó su cuerpo en la plaza entre burlas. Nadie lo lloró, salvo vos. Mirando las llamas supiste que a vos te espera lo mismo.", Elemento.FUEGO));
+        traumas.add(new RecuerdoDeTrauma("El bautismo", "De niño viste cómo ahogaban a una \"bruja\" en el lago del pueblo mientras todos aplaudían. Ese día supiste que querías ser el que mata, y no el que mira.", Elemento.AGUA));
+        traumas.add(new RecuerdoDeTrauma("La plaza bajo la lluvia", "Era una de tus primeras ejecuciones. El rayo cayó justo cuando bajabas el hacha, y el golpe salió torcido. Un verdugo mata limpio, sin una mancha, pero tuviste que golpear una y otra vez delante de toda la plaza. Esa noche te vieron como un asesino más.", Elemento.RAYO));
+        traumas.add(new RecuerdoDeTrauma("El pozo del pueblo", "Alguien envenenó el pozo y tu único amigo, el que siempre te esperaba en la esquina, bebió primero. Ejecutaste al culpable despacio, sin apuro, y por primera vez disfrutaste cada segundo.", Elemento.VENENO));
         return traumas;
     }
 }
