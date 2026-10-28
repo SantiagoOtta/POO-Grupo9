@@ -237,6 +237,6 @@ Resolcion de problemas:
 
 - Se crea la introduccion y comienzo del escenario principal.
 
-## 28/10 - Desarrollo del Area de combate
+### 28/10 - Desarrollo del Area de combate
 
 - Se crea la generacion randomizada del bosque y el sistema de combate.
