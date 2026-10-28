@@ -31,6 +31,10 @@ public class VentanaJuego extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         listaTarjetas = new ArrayList<>();
+        UIManager.put("ToolTip.background", PANEL);
+        UIManager.put("ToolTip.foreground", TEXTO);
+        UIManager.put("ToolTip.border", BorderFactory.createLineBorder(DORADO));
+        ToolTipManager.sharedInstance().setInitialDelay(150);
         panelEstado = new PanelEstado();
         add(crearZona(), BorderLayout.CENTER);
         add(panelEstado, BorderLayout.EAST);
@@ -93,10 +97,18 @@ public class VentanaJuego extends JFrame {
     }
 
     public void ponerPregunta(String texto, String[] opciones, ArrayBlockingQueue<Integer> respuestas) {
+        ponerPregunta(texto, opciones, null, respuestas);
+    }
+
+    // ayudas: lo que se lee al pasar el mouse sobre cada botón (puede ser null, o tener null en algún lugar)
+    public void ponerPregunta(String texto, String[] opciones, String[] ayudas, ArrayBlockingQueue<Integer> respuestas) {
         narracion.setText("<html><div style='width:390px'>" + texto.replace("\n", "<br>") + "</div></html>");
         botones.removeAll();
         for (int i = 0; i < opciones.length; i++) {
             JButton boton = crearBoton(opciones[i]);
+            if (ayudas != null && ayudas[i] != null) {
+                boton.setToolTipText(ayudas[i]);
+            }
             int elegida = i;
             boton.addActionListener(e -> {
                 apagarBotones();

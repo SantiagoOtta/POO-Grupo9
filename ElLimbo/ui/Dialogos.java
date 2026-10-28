@@ -34,7 +34,12 @@ public class Dialogos {
     }
 
     public static int elegir(String texto, String[] opciones) {
-        return preguntar(texto, opciones);
+        return preguntar(texto, opciones, null);
+    }
+
+    // Igual que elegir, pero cada botón explica qué hace al pasar el mouse por encima
+    public static int elegir(String texto, String[] opciones, String[] ayudas) {
+        return preguntar(texto, opciones, ayudas);
     }
 
     public static boolean confirmar(String texto) {
@@ -92,8 +97,12 @@ public class Dialogos {
     }
 
     private static int preguntar(String texto, String[] opciones) {
+        return preguntar(texto, opciones, null);
+    }
+
+    private static int preguntar(String texto, String[] opciones, String[] ayudas) {
         respuestas.clear();
-        SwingUtilities.invokeLater(() -> ventana.ponerPregunta(texto, opciones, respuestas));
+        SwingUtilities.invokeLater(() -> ventana.ponerPregunta(texto, opciones, ayudas, respuestas));
         return esperarRespuesta();
     }
 

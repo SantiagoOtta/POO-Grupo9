@@ -329,7 +329,13 @@ public class Juego {
             return;
         }
 
-        int elegida = Dialogos.elegir(texto, opciones.toArray(new String[0]));
+        String[] ayudas = new String[opciones.size()];
+        for (int i = 0; i < opciones.size(); i++) {
+            if (opciones.get(i).equals("Quedarte con el recuerdo")) {
+                ayudas[i] = ayudaDeRecuerdo(nuevo);
+            }
+        }
+        int elegida = Dialogos.elegir(texto, opciones.toArray(new String[0]), ayudas);
         if (opciones.get(elegida).equals("Quedarte con el recuerdo")) {
             int bonusAntes = personaje.getBonusDaño();
             personaje.agregarRecuerdo(nuevo);
@@ -342,11 +348,13 @@ public class Juego {
             Dialogos.mostrar(mensaje);
         } else {
             String[] botones = new String[gastados.size()];
+            String[] ayudasRecarga = new String[gastados.size()];
             for (int i = 0; i < gastados.size(); i++) {
                 Recuerdo recuerdo = gastados.get(i);
                 botones[i] = recuerdo.getNombre() + " · " + ((Reutilizable) recuerdo).getUsosRestantes() + "/3 usos";
+                ayudasRecarga[i] = "Recargado: " + GrupoDeEnemigos.textoAyuda(personaje, recuerdo, 3);
             }
-            int elegido = Dialogos.elegir("¿Qué recuerdo querés recargar?", botones);
+            int elegido = Dialogos.elegir("¿Qué recuerdo querés recargar?", botones, ayudasRecarga);
             Recuerdo recargado = gastados.get(elegido);
             ((Reutilizable) recargado).setUsosRestantes(3);
             Dialogos.actualizarEstado(personaje);
@@ -528,10 +536,29 @@ public class Juego {
                 + " te hace más daño: es tu debilidad.");
     }
 
+    // Tooltip al elegir un recuerdo para conseguirlo: su descripción, cortada en líneas de unos 60 caracteres
+    // (así el cartel se ajusta al texto y no queda espacio vacío en las descripciones cortas)
+    private String ayudaDeRecuerdo(Recuerdo recuerdo) {
+        StringBuilder ayuda = new StringBuilder("<html>");
+        StringBuilder linea = new StringBuilder();
+        for (String palabra : recuerdo.getDescripcion().split(" ")) {
+            if (linea.length() > 0 && linea.length() + palabra.length() >= 60) {
+                ayuda.append(linea).append("<br>");
+                linea = new StringBuilder();
+            }
+            if (linea.length() > 0) {
+                linea.append(" ");
+            }
+            linea.append(palabra);
+        }
+        return ayuda.append(linea).append("</html>").toString();
+    }
+
     private void elegirUnoDe(ArrayList<Recuerdo> opciones, String texto) {
         Collections.shuffle(opciones);
         StringBuilder narracion = new StringBuilder(texto);
         String[] botones = new String[3];
+        String[] ayudas = new String[3];
         for (int i = 0; i < 3; i++) {
             Recuerdo recuerdo = opciones.get(i);
             String nombre = recuerdo.getNombre();
@@ -543,9 +570,10 @@ public class Juego {
                 nombre = nombre + " (" + Dialogos.nombreElemento(((RecuerdoDeTrauma) recuerdo).getElemento()) + ")";
             }
             botones[i] = nombre;
+            ayudas[i] = ayudaDeRecuerdo(recuerdo);
             narracion.append("\n\n").append(nombre).append(": ").append(recuerdo.getDescripcion());
         }
-        int elegido = Dialogos.elegir(narracion.toString(), botones);
+        int elegido = Dialogos.elegir(narracion.toString(), botones, ayudas);
         jugador.agregarRecuerdo(opciones.get(elegido));
         Dialogos.actualizarEstado(jugador);
     }

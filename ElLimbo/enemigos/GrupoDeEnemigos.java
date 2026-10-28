@@ -79,15 +79,19 @@ public class GrupoDeEnemigos implements Interactuable {
                 cantidadBotones++;
             }
             String[] botones = new String[cantidadBotones];
+            String[] ayudas = new String[cantidadBotones];
             for (int i = 0; i < lista.size(); i++) {
                 botones[i] = textoBoton(lista.get(i));
+                ayudas[i] = textoAyuda(personaje, lista.get(i));
             }
             if (conHacha) {
                 botones[lista.size()] = "Golpe de hacha (sin elemento)";
+                ayudas[lista.size()] = "Sin elemento · " + (6 + personaje.getBonusDaño()) + " a "
+                        + (8 + personaje.getBonusDaño()) + " de daño a un enemigo · no se gasta";
             }
             botones[cantidadBotones - 1] = "← Volver";
 
-            int elegido = Dialogos.elegir("¿Qué usás?", botones);
+            int elegido = Dialogos.elegir("¿Qué usás?", botones, ayudas);
 
             if (elegido < lista.size()) {
                 Recuerdo recuerdo = lista.get(elegido);
@@ -201,6 +205,44 @@ public class GrupoDeEnemigos implements Interactuable {
             return trauma.getNombre() + " (" + Dialogos.nombreElemento(trauma.getElemento()) + ") · uso único";
         } else {
             return recuerdo.getNombre() + " · " + textoUsos((Reutilizable) recuerdo);
+        }
+    }
+
+    // Lo que se lee al pasar el mouse sobre el botón: qué hace el recuerdo si lo usás ahora
+    private String textoAyuda(Personaje personaje, Recuerdo recuerdo) {
+        int usos = 1;
+        if (recuerdo instanceof Reutilizable) {
+            usos = ((Reutilizable) recuerdo).getUsosRestantes();
+        }
+        return textoAyuda(personaje, recuerdo, usos);
+    }
+
+    // Lo mismo, pero contando con una cantidad de usos dada (al recargar, el recuerdo vuelve a tener 3)
+    public static String textoAyuda(Personaje personaje, Recuerdo recuerdo, int usos) {
+        String cantidadDeUsos = usos == 1 ? "1 uso" : usos + " usos";
+        if (recuerdo instanceof RecuerdoDeHabilidad) {
+            RecuerdoDeHabilidad habilidad = (RecuerdoDeHabilidad) recuerdo;
+            int daño = habilidad.getDaño();
+            if (usos == 1) {
+                daño = daño / 2;
+            }
+            daño = daño + personaje.getBonusDaño();
+            String ayuda = Dialogos.nombreElemento(habilidad.getElemento()) + " · " + daño + " de daño "
+                    + (habilidad.isEnArea() ? "a todos los enemigos" : "a un enemigo") + " · " + cantidadDeUsos;
+            if (usos == 1) {
+                ayuda = ayuda + " (último uso: fragmentado, pega la mitad)";
+            }
+            return ayuda;
+        } else if (recuerdo instanceof RecuerdoDeTrauma) {
+            RecuerdoDeTrauma trauma = (RecuerdoDeTrauma) recuerdo;
+            return Dialogos.nombreElemento(trauma.getElemento()) + " · " + (trauma.getDaño() + personaje.getBonusDaño())
+                    + " de daño a un enemigo · te cuesta entre 15 y 25 de vida · uso único";
+        } else if (recuerdo instanceof RecuerdoDePersona) {
+            return "Resistencia del " + usos * 25 + "% a tu debilidad durante este combate · " + cantidadDeUsos;
+        } else {
+            int porcentaje = usos * 25;
+            return "Cura el " + porcentaje + "% de tu vida máxima (" + personaje.getVidaMaxima() * porcentaje / 100
+                    + " de vida) · " + cantidadDeUsos;
         }
     }
 
