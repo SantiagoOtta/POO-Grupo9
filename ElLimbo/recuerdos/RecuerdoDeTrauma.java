@@ -18,6 +18,18 @@ public class RecuerdoDeTrauma extends Recuerdo {
         return elemento;
     }
 
+    public int getDaño() {
+        return daño;
+    }
+
     @Override
-    public void activar(Personaje personaje) {}
+    protected int dañoDeAtaque() {
+        return daño;
+    }
+
+    @Override
+    public void activar(Personaje personaje) {
+        int costo = 15 + (int) (Math.random() * 11);
+        personaje.setVida(Math.max(0, personaje.getVida() - costo));
+    }
 }

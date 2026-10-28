@@ -8,6 +8,7 @@ import recuerdos.RecuerdoDeLugar;
 import recuerdos.RecuerdoDePersona;
 
 import javax.swing.SwingUtilities;
+import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class Dialogos {
@@ -47,6 +48,8 @@ public class Dialogos {
         String datos = "<html>Monedas: " + personaje.getMonedas()
                 + "<br>Bonus de daño: +" + personaje.getBonusDaño()
                 + "<br>Debilidad: " + nombreElemento(personaje.getDebilidad())
+                + "<br>Resistencias: " + textoResistencias(personaje)
+                + textoProteccion(personaje)
                 + "<br>Llave del castillo: " + (personaje.isTieneLlave() ? "sí" : "no")
                 + "<br>Recuerdo clave: " + (personaje.isTieneRecuerdoClave() ? "sí" : "no")
                 + "</html>";
@@ -74,9 +77,27 @@ public class Dialogos {
         SwingUtilities.invokeLater(() -> ventana.getPanelEstado().ponerAviso(texto));
     }
 
+    public static void mostrarEnemigos(String[] nombres, String[] elementos, int[] vidas, int[] vidasMaximas) {
+        SwingUtilities.invokeLater(() -> ventana.ponerTarjetas(nombres, elementos, vidas, vidasMaximas));
+    }
+
+    public static void ocultarEnemigos() {
+        SwingUtilities.invokeLater(() -> ventana.ocultarTarjetas());
+    }
+
+    public static int elegirEnemigo(String texto) {
+        respuestas.clear();
+        SwingUtilities.invokeLater(() -> ventana.pedirObjetivo(texto, respuestas));
+        return esperarRespuesta();
+    }
+
     private static int preguntar(String texto, String[] opciones) {
         respuestas.clear();
         SwingUtilities.invokeLater(() -> ventana.ponerPregunta(texto, opciones, respuestas));
+        return esperarRespuesta();
+    }
+
+    private static int esperarRespuesta() {
         try {
             return respuestas.take();
         } catch (InterruptedException e) {
@@ -95,6 +116,31 @@ public class Dialogos {
         } else {
             return "✶";
         }
+    }
+
+    private static String textoProteccion(Personaje personaje) {
+        if (personaje.getPorcentajeResistenciaTemporal() == 0 || personaje.getResistenciaTemporal() == null) {
+            return "";
+        }
+        return "<br>Protección: " + personaje.getPorcentajeResistenciaTemporal() + "% contra "
+                + nombreElemento(personaje.getResistenciaTemporal()).toLowerCase();
+    }
+
+    private static String textoResistencias(Personaje personaje) {
+        String texto = "";
+        HashMap<Elemento, Integer> resistencias = personaje.getResistencias();
+        for (Elemento elemento : Elemento.values()) {
+            if (resistencias.getOrDefault(elemento, 0) >= 3) {
+                if (!texto.isEmpty()) {
+                    texto = texto + ", ";
+                }
+                texto = texto + nombreElemento(elemento);
+            }
+        }
+        if (texto.isEmpty()) {
+            return "ninguna";
+        }
+        return texto;
     }
 
     public static String nombreElemento(Elemento elemento) {

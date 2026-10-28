@@ -23,9 +23,12 @@ public abstract class Recuerdo implements Comparable<Recuerdo> {
     public abstract void activar(Personaje personaje);
 
 
+    protected int dañoDeAtaque() {
+        return 0;
+    }
 
     @Override
     public int compareTo(Recuerdo otro) {
-        return 0;
+        return otro.dañoDeAtaque() - this.dañoDeAtaque();
     }
 }
