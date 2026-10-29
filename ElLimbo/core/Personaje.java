@@ -98,6 +98,12 @@ public class Personaje {
         }
     }
 
+    public void quitarRecuerdo(Recuerdo recuerdo) {
+        int cantidadAntes = recuerdos.size();
+        recuerdos.remove(recuerdo);
+        ajustarCrecimiento(cantidadAntes);
+    }
+
     public void setVida(int vida) {
         this.vida = vida;
     }

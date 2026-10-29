@@ -6,6 +6,7 @@ import recuerdos.Recuerdo;
 import recuerdos.RecuerdoDeHabilidad;
 import recuerdos.RecuerdoDeLugar;
 import recuerdos.RecuerdoDePersona;
+import recuerdos.RecuerdoDeTrauma;
 
 import javax.swing.SwingUtilities;
 import java.util.HashMap;
@@ -37,7 +38,6 @@ public class Dialogos {
         return preguntar(texto, opciones, null);
     }
 
-    // Igual que elegir, pero cada botón explica qué hace al pasar el mouse por encima
     public static int elegir(String texto, String[] opciones, String[] ayudas) {
         return preguntar(texto, opciones, ayudas);
     }
@@ -150,6 +150,34 @@ public class Dialogos {
             return "ninguna";
         }
         return texto;
+    }
+
+    public static String textoAyuda(Personaje personaje, Recuerdo recuerdo, int usos) {
+        String cantidadDeUsos = usos == 1 ? "1 uso" : usos + " usos";
+        if (recuerdo instanceof RecuerdoDeHabilidad) {
+            RecuerdoDeHabilidad habilidad = (RecuerdoDeHabilidad) recuerdo;
+            int daño = habilidad.getDaño();
+            if (usos == 1) {
+                daño = daño / 2;
+            }
+            daño = daño + personaje.getBonusDaño();
+            String ayuda = nombreElemento(habilidad.getElemento()) + " · " + daño + " de daño "
+                    + (habilidad.isEnArea() ? "a todos los enemigos" : "a un enemigo") + " · " + cantidadDeUsos;
+            if (usos == 1) {
+                ayuda = ayuda + " (último uso: fragmentado, pega la mitad)";
+            }
+            return ayuda;
+        } else if (recuerdo instanceof RecuerdoDeTrauma) {
+            RecuerdoDeTrauma trauma = (RecuerdoDeTrauma) recuerdo;
+            return nombreElemento(trauma.getElemento()) + " · " + (trauma.getDaño() + personaje.getBonusDaño())
+                    + " de daño a un enemigo · te cuesta entre 15 y 25 de vida · uso único";
+        } else if (recuerdo instanceof RecuerdoDePersona) {
+            return "Resistencia del " + usos * 25 + "% a tu debilidad durante este combate · " + cantidadDeUsos;
+        } else {
+            int porcentaje = usos * 25;
+            return "Cura el " + porcentaje + "% de tu vida máxima (" + personaje.getVidaMaxima() * porcentaje / 100
+                    + " de vida) · " + cantidadDeUsos;
+        }
     }
 
     public static String nombreElemento(Elemento elemento) {

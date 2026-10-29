@@ -100,7 +100,6 @@ public class VentanaJuego extends JFrame {
         ponerPregunta(texto, opciones, null, respuestas);
     }
 
-    // ayudas: lo que se lee al pasar el mouse sobre cada botón (puede ser null, o tener null en algún lugar)
     public void ponerPregunta(String texto, String[] opciones, String[] ayudas, ArrayBlockingQueue<Integer> respuestas) {
         narracion.setText("<html><div style='width:390px'>" + texto.replace("\n", "<br>") + "</div></html>");
         botones.removeAll();
