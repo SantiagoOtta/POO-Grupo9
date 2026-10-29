@@ -11,6 +11,7 @@ import recuerdos.RecuerdoDeTrauma;
 import recuerdos.Reutilizable;
 import ui.Dialogos;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -208,42 +209,12 @@ public class GrupoDeEnemigos implements Interactuable {
         }
     }
 
-    // Lo que se lee al pasar el mouse sobre el botón: qué hace el recuerdo si lo usás ahora
     private String textoAyuda(Personaje personaje, Recuerdo recuerdo) {
         int usos = 1;
         if (recuerdo instanceof Reutilizable) {
             usos = ((Reutilizable) recuerdo).getUsosRestantes();
         }
-        return textoAyuda(personaje, recuerdo, usos);
-    }
-
-    // Lo mismo, pero contando con una cantidad de usos dada (al recargar, el recuerdo vuelve a tener 3)
-    public static String textoAyuda(Personaje personaje, Recuerdo recuerdo, int usos) {
-        String cantidadDeUsos = usos == 1 ? "1 uso" : usos + " usos";
-        if (recuerdo instanceof RecuerdoDeHabilidad) {
-            RecuerdoDeHabilidad habilidad = (RecuerdoDeHabilidad) recuerdo;
-            int daño = habilidad.getDaño();
-            if (usos == 1) {
-                daño = daño / 2;
-            }
-            daño = daño + personaje.getBonusDaño();
-            String ayuda = Dialogos.nombreElemento(habilidad.getElemento()) + " · " + daño + " de daño "
-                    + (habilidad.isEnArea() ? "a todos los enemigos" : "a un enemigo") + " · " + cantidadDeUsos;
-            if (usos == 1) {
-                ayuda = ayuda + " (último uso: fragmentado, pega la mitad)";
-            }
-            return ayuda;
-        } else if (recuerdo instanceof RecuerdoDeTrauma) {
-            RecuerdoDeTrauma trauma = (RecuerdoDeTrauma) recuerdo;
-            return Dialogos.nombreElemento(trauma.getElemento()) + " · " + (trauma.getDaño() + personaje.getBonusDaño())
-                    + " de daño a un enemigo · te cuesta entre 15 y 25 de vida · uso único";
-        } else if (recuerdo instanceof RecuerdoDePersona) {
-            return "Resistencia del " + usos * 25 + "% a tu debilidad durante este combate · " + cantidadDeUsos;
-        } else {
-            int porcentaje = usos * 25;
-            return "Cura el " + porcentaje + "% de tu vida máxima (" + personaje.getVidaMaxima() * porcentaje / 100
-                    + " de vida) · " + cantidadDeUsos;
-        }
+        return Dialogos.textoAyuda(personaje, recuerdo, usos);
     }
 
     private String textoUsos(Reutilizable recuerdo) {
@@ -257,7 +228,7 @@ public class GrupoDeEnemigos implements Interactuable {
         int vidaAntes = enemigo.getVida();
         enemigo.recibirDaño(daño, elemento);
         int hecho = vidaAntes - enemigo.getVida();
-        String texto = " Le hacés " + hecho + " de daño a la " + nombre(enemigo) + ".";
+        String texto = " Le hacés " + hecho + " de daño " + aQuien(enemigo) + ".";
         if (elemento != null && elemento == enemigo.getDebilidad()) {
             texto = texto + " ¡Es débil al " + Dialogos.nombreElemento(elemento).toLowerCase() + "! (+50%)";
         }
@@ -268,6 +239,10 @@ public class GrupoDeEnemigos implements Interactuable {
         String texto = "";
         for (Enemigo enemigo : enemigos) {
             if (enemigo.sigueEnCombate() && personaje.getVida() > 0) {
+                if (enemigo instanceof LadronDeRecuerdos) {
+                    texto = texto + robo(personaje, enemigo);
+                    continue;
+                }
                 Elemento elemento = enemigo.getElemento();
                 int golpesAntes = personaje.getResistencias().getOrDefault(elemento, 0);
                 int vidaAntes = personaje.getVida();
@@ -319,7 +294,31 @@ public class GrupoDeEnemigos implements Interactuable {
         Dialogos.mostrarEnemigos(nombres, elementos, vidas, vidasMaximas);
     }
 
+    private String robo(Personaje personaje, Enemigo ladron) {
+        ArrayList<Recuerdo> antes = personaje.getRecuerdos();
+        ladron.infligirDaño(personaje);
+        ArrayList<Recuerdo> despues = personaje.getRecuerdos();
+        for (Recuerdo recuerdo : antes) {
+            if (!despues.contains(recuerdo)) {
+                return "\n\nEl Ladrón de Recuerdos te mete la mano en el pecho y te arranca una parte de tu alma fragmentada:"
+                        + recuerdo.getNombre() + ".";
+            }
+        }
+        return "\n\nEl Ladrón de Recuerdos busca algo para robarte, pero lo poco que te queda no se deja arrancar.";
+    }
+
+    private String aQuien(Enemigo enemigo) {
+        if (enemigo instanceof LadronDeRecuerdos) {
+            return "al " + nombre(enemigo);
+        }
+        return "a la " + nombre(enemigo);
+    }
+
     private String presentacion() {
+        if (enemigos.get(0) instanceof LadronDeRecuerdos) {
+            return "Entre los árboles, una figura encorvada te viene siguiendo los pasos: El ladrón de Recuerdos"
+                    + "No quiere tu vida. Quiere robarte lo último que te queda.";
+        }
         if (enemigos.size() == 1) {
             return "De la niebla se desprende una figura oscura: la " + nombre(enemigos.get(0)) + ". Viene hacia vos.";
         }
@@ -338,6 +337,12 @@ public class GrupoDeEnemigos implements Interactuable {
     private String siCayo(Enemigo enemigo) {
         if (enemigo.sigueEnCombate()) {
             return "";
+        }
+        if (enemigo instanceof LadronDeRecuerdos && enemigo.getVida() > 0) {
+            return "\n\nEl Ladrón de Recuerdos se encoge, herido, y huye entre los árboles con lo que te robó.";
+        }
+        if (enemigo instanceof LadronDeRecuerdos) {
+            return "\n\nEl ladrón de Recuerdos case y se deshace en la niebla.";
         }
         return "\n\nLa " + nombre(enemigo) + " se deshace en la niebla.";
     }
@@ -361,6 +366,9 @@ public class GrupoDeEnemigos implements Interactuable {
     }
 
     private String nombre(Enemigo enemigo) {
+        if (enemigo instanceof LadronDeRecuerdos) {
+            return "Ladron de recuerdos";
+        }
         String nombre = "Sombra de " + Dialogos.nombreElemento(enemigo.getElemento());
         int iguales = 0;
         int numero = 0;

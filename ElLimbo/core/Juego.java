@@ -1,10 +1,12 @@
 package core;
 
 import enemigos.Enemigo;
+import enemigos.LadronDeRecuerdos;
 import excepciones.DisolucionException;
 import excepciones.RecuerdoPerdidoException;
 import enemigos.EnemigoBase;
 import enemigos.GrupoDeEnemigos;
+import enemigos.LadronDeRecuerdos   ;
 import npcs.Mercader;
 import recuerdos.Recuerdo;
 import recuerdos.RecuerdoDeHabilidad;
@@ -14,6 +16,7 @@ import recuerdos.RecuerdoDeTrauma;
 import recuerdos.Reutilizable;
 import ui.Dialogos;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -235,7 +238,7 @@ public class Juego {
 
         switch (tipo) {
             case "ladron":
-                return personaje -> encuentroTemporal("el Ladrón de Recuerdos");
+                return personaje -> encuentroConLadron();
             case "mercader":
                 return personaje -> encuentroTemporal("el Mercader");
             case "guardian":
@@ -283,6 +286,48 @@ public class Juego {
             otorgarRecompensa(jugador, tendencia);
         }
         return ganaste;
+    }
+
+    private boolean encuentroConLadron() {
+        Elemento elemento = elementoAlAzar();
+        int vida = 30 + (int) (Math.random() * 11);
+        LadronDeRecuerdos ladron = new LadronDeRecuerdos(elemento, vida, debilidadDe(elemento), 0);
+        ArrayList<Enemigo> enemigos = new ArrayList<>();
+        enemigos.add(ladron);
+        boolean sobreviviste = new GrupoDeEnemigos(enemigos).interactuar(jugador);
+        if (!sobreviviste) {
+            return false;
+        }
+
+        boolean vencido = ladron.getVida() <= 0;
+        int monedas;
+        String texto;
+        if (vencido) {
+            monedas = 12 + (int) (Math.random() * 9);
+            texto = "El Ladrón de Recuerdos no se levanta. Entre sus harapos encuentras " + monedas + " monedas.";
+        } else {
+            monedas = 5 + (int) (Math.random() * 6);
+            texto = "En la huida se le cae una bolsita del cinturon: " + monedas + " monedas.";
+        }
+        ArrayList<Recuerdo> botin = ladron.getBotin();
+        if (!botin.isEmpty()) {
+            StringBuilder robados = new StringBuilder();
+            for (int i = 0; i < botin.size(); i++) {
+                if (i > 0) {
+                    robados.append(", ");
+                }
+                robados.append(botin.get(i).getNombre());
+            }
+            texto = texto + "\n\nLo que te robó no vuelve " + robados + ".";
+        }
+        jugador.setMonedas(jugador.getMonedas() + monedas);
+        Dialogos.zona("Después del combate");
+        Dialogos.actualizarEstado(jugador);
+        Dialogos.mostrar(texto);
+        if(vencido) {
+            otorgarRecompensa(jugador, ladron.getElemento());
+            }
+        return true;
     }
 
     private void muerteDefinitiva(String mensaje) {
@@ -352,7 +397,7 @@ public class Juego {
             for (int i = 0; i < gastados.size(); i++) {
                 Recuerdo recuerdo = gastados.get(i);
                 botones[i] = recuerdo.getNombre() + " · " + ((Reutilizable) recuerdo).getUsosRestantes() + "/3 usos";
-                ayudasRecarga[i] = "Recargado: " + GrupoDeEnemigos.textoAyuda(personaje, recuerdo, 3);
+                ayudasRecarga[i] = "Recargado: " + Dialogos.textoAyuda(personaje, recuerdo, 3);
             }
             int elegido = Dialogos.elegir("¿Qué recuerdo querés recargar?", botones, ayudasRecarga);
             Recuerdo recargado = gastados.get(elegido);
@@ -536,8 +581,6 @@ public class Juego {
                 + " te hace más daño: es tu debilidad.");
     }
 
-    // Tooltip al elegir un recuerdo para conseguirlo: su descripción, cortada en líneas de unos 60 caracteres
-    // (así el cartel se ajusta al texto y no queda espacio vacío en las descripciones cortas)
     private String ayudaDeRecuerdo(Recuerdo recuerdo) {
         StringBuilder ayuda = new StringBuilder("<html>");
         StringBuilder linea = new StringBuilder();
@@ -607,8 +650,8 @@ public class Juego {
         personas.add(new RecuerdoDePersona("El hermano menor", "Te seguía a todos lados, y vos fingías que te molestaba."));
         personas.add(new RecuerdoDePersona("El maestro", "Te enseñó a sostener el hacha sin que te temblara el pulso y a no dejar nunca una mancha. Su voz áspera fue lo más parecido a un padre que tuviste."));
         personas.add(new RecuerdoDePersona("El sacerdote", "Te escuchaba en la penumbra sin hacer preguntas ni juzgarte. Era de los pocos que te hablaban como a una persona."));
-        personas.add(new RecuerdoDePersona("La condenada que lo perdonó", "Antes de que bajaras el hacha te dijo que no te odiaba. Nadie más volvió a decirte algo así."));
-        personas.add(new RecuerdoDePersona("El carcelero", "Compartía su pan duro contigo sin decir una palabra. Era el único que entendía lo que pesaba el oficio."));
+        personas.add(new RecuerdoDePersona("La condenada que te perdonó", "Antes de que bajaras el hacha te dijo que no te odiaba. Nadie más volvió a decirte algo así."));
+        personas.add(new RecuerdoDePersona("El carcelero", "Compartía su pan duro con vos sin decir una palabra. Era el único que entendía lo que pesaba el oficio."));
         return personas;
     }
 
