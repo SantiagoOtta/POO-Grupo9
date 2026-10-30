@@ -27,7 +27,7 @@ public class Mercader implements Interactuable {
     @Override
     public boolean interactuar(Personaje personaje) {
         Dialogos.zona("El Mercader");
-        String texto = "Bajo un árbol seco, un viejo encorvado extiende una manta en el suelo."
+        String texto = "Un viejo encorvado extiende una manta en el suelo."
                 + "Encima hay burbujas de luz, ordenadas con cuidado.\n\n"
                 + "\"Recuerdos ajenos, recuerdos perdidos... Todo tiene su precio.\"";
         while (true) {
@@ -41,7 +41,7 @@ public class Mercader implements Interactuable {
                 }
             }
             botones[stock.length] = "Recargar un recuerdo";
-            botones[stock.length + 1] = "Seguir camino";
+            botones[stock.length + 1] = "Despedirte";
 
             int elegida = Dialogos.elegir(texto + "\n\nTenés " + personaje.getMonedas() + " monedas.", botones, ayudas);
             if (elegida == stock.length + 1) {
