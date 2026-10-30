@@ -88,6 +88,9 @@ public class Juego {
 
             ArrayList<String> opciones = new ArrayList<>();
             opciones.add("Salir al bosque");
+            if (encuentrosMercader >= 3) {
+                opciones.add("Comerciar con el Mercader");
+            }
             if (puertasReveladas >= 1 && !jugador.isTieneLlave()) {
                 opciones.add("Acercarte a la puerta del ala este");
             }
@@ -113,6 +116,11 @@ public class Juego {
                     muerteDefinitiva(e.getMessage());
                     enElJuego = false;
                 }
+            } else if (opcion.equals("Comerciar con el Mercader")) {
+                Dialogos.zona("El Castillo");
+                Dialogos.mostrar("En un rincón del patio, el Mercader acomodo su 'tienda' como si hubiese estado ahí toda la vida"
+                        + "Te ve llegar y sonríe sin dientes.");
+                mercader.interactuar(jugador);
             } else if (opcion.equals("Acercarte a la puerta del ala este")) {
                 puertaEste();
             } else if (opcion.equals("Acercarte a la puerta del ala oeste")) {
@@ -241,7 +249,7 @@ public class Juego {
             case "ladrón":
                 return personaje -> encuentroConLadron();
             case "mercader":
-                return mercader;
+                return personaje -> encuentroConMercader();
             case "guardián":
                 return personaje -> encuentroTemporal("el Guardián de Recuerdos");
             case "claro":
@@ -328,6 +336,21 @@ public class Juego {
         if(vencido) {
             otorgarRecompensa(jugador, ladron.getElemento());
             }
+        return true;
+    }
+
+    private boolean encuentroConMercader() {
+        int monedasAntes = jugador.getMonedas();
+        mercader.interactuar((jugador));
+        if (encuentrosMercader < 3 && jugador.getMonedas() < monedasAntes) {
+            encuentrosMercader++;
+            if (encuentrosMercader == 3) {
+                Dialogos.mostrar("Antes que te vayas, el Mercader te mira un rato largo.\n\n"
+                        + "\"Ya sos cliente de la casa. Este bosque se está poniendo cada vez mas feo para un viejo como yo..."
+                        + "Si no te molesta, me voy a instalar en tu castillo, te voy a ser de ayuda, vas a poder comprarme ahí también."
+                        + "Además voy a seguir saliendo a buscar mercancia, asi que no te preocupes por extrañarme en tus salidas.\"");
+            }
+        }
         return true;
     }
 
@@ -555,10 +578,17 @@ public class Juego {
         }
     }
 
+    private String textoDelMercader() {
+        if (encuentrosMercader >= 3) {
+            return "\n\nEn un rincón del patio, el Mercader tiene su manta extendida.";
+        }
+        return "";
+    }
+
     private String descripcionCastillo() {
         if (puertasReveladas == 0) {
             return "El castillo esta envuelto en niebla. Apenas se distinguen muros y diagonales. "
-                    + "Adentro no se ve nada.\n\nAfuera, el bosque espera.";
+                    + "Adentro no se ve nada." + textoDelMercader() + "\n\nAfuera, el bosque espera.";
         }
         StringBuilder texto = new StringBuilder("La oscuridad cesa, se ven muros de piedra, un patio y corredores vacíos.");
         if (!jugador.isTieneLlave()) {
@@ -574,6 +604,7 @@ public class Juego {
         if (puertasReveladas >= 3 && !jugador.isTieneRecuerdoClave()) {
             texto.append("\n\nEn el ala oeste hay una puerta idéntica a la del ala este, se oye una voz.");
         }
+        texto.append(textoDelMercader());
         texto.append("\n\nAfuera, el bosque espera.");
         return texto.toString();
     }
