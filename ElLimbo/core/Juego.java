@@ -176,6 +176,7 @@ public class Juego {
 
     private void recorrerBosque() throws DisolucionException, RecuerdoPerdidoException {
         jugador.reiniciarResistencias();
+        mercader = new Mercader(stockDelMercader());
         Dialogos.zona("El bosque");
         Dialogos.mostrar("Salís del castillo y la niebla se cierra detrás de tus pasos. "
                 + "No hay vuelta atrás hasta llegar al final del bosque.");
@@ -237,11 +238,11 @@ public class Juego {
         usados.add(tipo);
 
         switch (tipo) {
-            case "ladron":
+            case "ladrón":
                 return personaje -> encuentroConLadron();
             case "mercader":
-                return personaje -> encuentroTemporal("el Mercader");
-            case "guardian":
+                return mercader;
+            case "guardián":
                 return personaje -> encuentroTemporal("el Guardián de Recuerdos");
             case "claro":
                 return personaje -> claroEnCalma();
@@ -429,6 +430,21 @@ public class Juego {
             }
         }
         return posibles.get((int) (Math.random() * posibles.size()));
+    }
+
+    private Recuerdo[] stockDelMercader() {
+        ArrayList<Recuerdo> posibles = new ArrayList<>();
+        for (Recuerdo recuerdo : todosLosRecuerdos()) {
+            if (!tieneRecuerdo(recuerdo.getNombre())) {
+                posibles.add(recuerdo);
+            }
+        }
+        Collections.shuffle(posibles);
+        Recuerdo[] stock = new Recuerdo[3];
+        for (int i = 0; i < stock.length && i < posibles.size(); i++) {
+            stock[i] = posibles.get(i);
+        }
+        return stock;
     }
 
     private ArrayList<Recuerdo> todosLosRecuerdos() {
