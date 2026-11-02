@@ -1,0 +1,11 @@
+vida=100
+monedas=0
+debilidad=VENENO
+llave=false
+recuerdoClave=false
+puertasReveladas=0
+encuentroMercader=0
+recuerdo=HABILIDAD|Látigo de agua|Un chorro de agua barre el campo como un látigo y abre la piel de todos los que alcanza.|AGUA|true|14|3
+recuerdo=PERSONA|La condenada que te perdonó|Antes de que bajaras el hacha te dijo que no te odiaba. Nadie más volvió a decirte algo así.|-|-|0|3
+recuerdo=LUGAR|La biblioteca vieja|Silencio, polvo y la luz de la tarde entrando por los vitrales.|-|-|0|3
+recuerdo=TRAUMA|La copa|Le serviste la copa y lo miraste beber. Sabía lo que era, y la bebió igual.|VENENO|-|45|1

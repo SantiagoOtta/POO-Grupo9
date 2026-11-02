@@ -32,6 +32,10 @@ public class RecuerdoDeHabilidad extends Recuerdo implements Reutilizable {
         return daño;
     }
 
+    public void setDaño(int daño) {
+        this.daño = daño;
+    }
+
     public boolean isFragmentado() {
         return fragmentado;
     }
