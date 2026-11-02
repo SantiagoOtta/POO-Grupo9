@@ -1,1 +1,2 @@
-LUGAR|El taller del maestro|Olor a aceite, el filo del hacha en la piedra y una lámpara que ardía hasta tarde. Ahí aprendiste a hacer tu trabajo sin dejarte llevar por lo que sentían los condenados. Cuando salía bien, tu maestro asentía con la cabeza, y con eso alcanzaba.|-|-
+HABILIDAD|Brea ardiente|Arrojás brea encendida que se le pega al cuerpo y no se apaga por más que se sacuda.|FUEGO|false
+PERSONA|El sacerdote|Te escuchaba en la penumbra sin hacer preguntas ni juzgarte. Era de los pocos que te hablaban como a una persona.|-|-

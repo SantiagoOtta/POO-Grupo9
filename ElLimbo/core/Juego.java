@@ -19,6 +19,12 @@ import recuerdos.Reutilizable;
 import ui.Dialogos;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -29,6 +35,7 @@ public class Juego {
     private int puertasReveladas;
     private int encuentrosMercader;
     private Mercader mercader;
+    private int ranura;
 
     public Juego() {
         this.jugador = new Personaje();
@@ -36,6 +43,7 @@ public class Juego {
         this.puertasReveladas = 0;
         this.encuentrosMercader = 0;
         this.mercader = null;
+        this.ranura = 1;
     }
 
     public void iniciar() {
@@ -43,22 +51,105 @@ public class Juego {
         boolean otraRun = true;
         while (otraRun) {
             reiniciarRun();
-            Dialogos.zona("El Limbo");
-            Dialogos.actualizarEstado(jugador);
-            Dialogos.mostrar("Abrís los ojos y no hay nada. Ni cielo, ni suelo, ni ruido.\n\n"
-                    + "Sabés quién sos: el Verdugo. Quitaste muchas vidas, y ninguna fue decisión tuya.\n\n"
-                    + "Y recordás algo más: haber muerto.");
-            Dialogos.mostrar("Esto es El Limbo. Si hay redención para alguien como vos, tiene que estar en algún lugar de esta oscuridad.\n\n"
-                    + "Caminás un poco, sin rumbo claro.");
-            Dialogos.mostrar("Entonces las ves: a lo lejos burbujas flotando, en medio de toda esta oscuridad, emiten una luz esperanzadora.");
-            elegirRecuerdosIniciales();
-            llegarAlRefugio();
+            if (!continuarPartida()) {
+                empezarRunNueva();
+            }
             menuCastillo();
             otraRun = Dialogos.confirmar("La oscuridad vuelve a cerrarse. En algún lugar del Limbo, otro Verdugo está por abrir los ojos.\n\n"
                     + "No va a recordar nada de esta run. Solo lo que dejaste en el cofre del Guardián lo va a estar esperando.\n\n"
                     + "¿Empezás una run nueva?");
         }
         Dialogos.cerrar();
+    }
+
+    private boolean continuarPartida() {
+        ArrayList<Integer> ocupadas = new ArrayList<>();
+        for (int numero = 1; numero <= 3; numero++) {
+            if (new File("partida_" + numero + ".txt").exists()) {
+                ocupadas.add(numero);
+            }
+        }
+        if (ocupadas.isEmpty()) {
+            return false;
+        }
+        Dialogos.zona("El Limbo");
+        Dialogos.actualizarEstado(jugador);
+        int eleccion = Dialogos.elegir("Hay partidas guardadas. ¿Qué querés hacer?",
+                new String[]{"Continuar partida", "Nueva run"});
+        if (eleccion == 1) {
+            return false;
+        }
+        String[] botones = new String[ocupadas.size() + 1];
+        for (int i = 0; i < ocupadas.size(); i++) {
+            botones[i] = "Ranura " + ocupadas.get(i) + " · " + resumenDeRanura(ocupadas.get(i));
+        }
+        botones[ocupadas.size()] = "← Volver";
+        int elegida = Dialogos.elegir("¿Qué partida continuás?", botones);
+        if (elegida == ocupadas.size()) {
+            return continuarPartida();
+        }
+        ranura = ocupadas.get(elegida);
+        if (!cargarPartida()) {
+            Dialogos.mostrar("La partida de la ranura " + ranura + " está dañada y no se puede cargar. Empezás una run nueva.");
+            return false;
+        }
+        Dialogos.zona("El Castillo");
+        Dialogos.actualizarEstado(jugador);
+        Dialogos.mostrar("Abrís los ojos en el patio del castillo. Todo está como lo dejaste.");
+        return true;
+    }
+
+    private void empezarRunNueva() {
+        elegirRanura();
+        Dialogos.zona("El Limbo");
+        Dialogos.actualizarEstado(jugador);
+        Dialogos.mostrar("Abrís los ojos y no hay nada. Ni cielo, ni suelo, ni ruido.\n\n"
+                + "Sabés quién sos: el Verdugo. En vida quitaste muchas vidas, y ninguna fue decisión tuya.\n\n"
+                + "Y recordás algo más: recordás haber muerto.");
+        Dialogos.mostrar("Esto es El Limbo. Si hay redención para alguien como vos, tiene que estar en algún lugar de esta oscuridad.\n\n"
+                + "Caminás un poco, sin saber hacia dónde.");
+        Dialogos.mostrar("Entonces las ves: burbujas flotando frente a vos que, en medio de toda la oscuridad, emiten luz.");
+        elegirRecuerdosIniciales();
+        llegarAlRefugio();
+    }
+
+    private void elegirRanura() {
+        Dialogos.zona("El Limbo");
+        Dialogos.actualizarEstado(jugador);
+        boolean elegida = false;
+        while (!elegida) {
+            String[] botones = new String[3];
+            for (int numero = 1; numero <= 3; numero++) {
+                String resumen = resumenDeRanura(numero);
+                botones[numero - 1] = "Ranura " + numero + " · " + (resumen == null ? "vacía" : resumen);
+            }
+            int opcion = Dialogos.elegir("¿En qué ranura se guarda esta run?", botones);
+            ranura = opcion + 1;
+            elegida = resumenDeRanura(ranura) == null
+                    || Dialogos.confirmar("La ranura " + ranura + " ya tiene una partida. Si seguís, se va a sobrescribir. ¿Seguís?");
+        }
+    }
+
+    private String resumenDeRanura(int numero) {
+        int recuerdos = 0;
+        String vida = "?";
+        String monedas = "?";
+        try (BufferedReader entrada = new BufferedReader(new FileReader("partida_" + numero + ".txt"))) {
+            String linea = entrada.readLine();
+            while (linea != null) {
+                if (linea.startsWith("recuerdo=")) {
+                    recuerdos++;
+                } else if (linea.startsWith("vida=")) {
+                    vida = linea.substring(5);
+                } else if (linea.startsWith("monedas=")) {
+                    monedas = linea.substring(8);
+                }
+                linea = entrada.readLine();
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return recuerdos + " recuerdos · " + vida + " de vida · " + monedas + " monedas";
     }
 
     private void reiniciarRun() {
@@ -79,11 +170,138 @@ public class Juego {
     }
 
     public void guardarPartida() {
-        Dialogos.avisar("El guardado se programa más adelante: todavía no se guarda nada.");
+        try (PrintWriter salida = new PrintWriter(new FileWriter("partida_" + ranura + ".txt"))) {
+            salida.println("vida=" + jugador.getVida());
+            salida.println("monedas=" + jugador.getMonedas());
+            salida.println("debilidad=" + (jugador.getDebilidad() == null ? "-" : jugador.getDebilidad().name()));
+            salida.println("llave=" + jugador.isTieneLlave());
+            salida.println("recuerdoClave=" + jugador.isTieneRecuerdoClave());
+            salida.println("puertasReveladas=" + puertasReveladas);
+            salida.println("encuentroMercader=" + encuentrosMercader);
+            for (Recuerdo recuerdo : jugador.getRecuerdos()) {
+                salida.println(lineaDeRecuerdo(recuerdo));
+            }
+            Dialogos.avisar("Partida guardada en la ranura " + ranura + ".");
+        } catch (IOException e ) {
+            Dialogos.avisar("No se pudo guardar la partida.");
+        }
+    }
+
+    private String lineaDeRecuerdo(Recuerdo recuerdo) {
+        String tipo = "LUGAR";
+        String elemento = "-";
+        String enArea = "-";
+        int daño = 0;
+        int usos = 1;
+        if (recuerdo instanceof RecuerdoDeHabilidad) {
+            RecuerdoDeHabilidad habilidad = (RecuerdoDeHabilidad) recuerdo;
+            tipo = "HABILIDAD";
+            elemento = habilidad.getElemento().name();
+            enArea = String.valueOf(habilidad.isEnArea());
+            daño = habilidad.getDaño();
+        } else if (recuerdo instanceof RecuerdoDeTrauma) {
+            RecuerdoDeTrauma trauma = (RecuerdoDeTrauma) recuerdo;
+            tipo = "TRAUMA";
+            elemento = trauma.getElemento().name();
+            daño = trauma.getDaño();
+        } else if (recuerdo instanceof RecuerdoDePersona) {
+            tipo = "PERSONA";
+        }
+        if (recuerdo instanceof Reutilizable) {
+            usos = ((Reutilizable) recuerdo).getUsosRestantes();
+        }
+        return "recuerdo=" + tipo + "|" + recuerdo.getNombre() + "|" + recuerdo.getDescripcion() + "|"
+                + elemento + "|" + enArea + "|" + daño + "|" + usos;
     }
 
     public boolean cargarPartida() {
-        return false;
+        Personaje cargado = new Personaje();
+        int vida = 0;
+        int monedas = 0;
+        Elemento debilidad = null;
+        boolean llave = false;
+        boolean recuerdoClave = false;
+        int puertas = 0;
+        int encuentros = 0;
+        try (BufferedReader entrada = new BufferedReader(new FileReader("partida_" + ranura + ".txt"))) {
+            String linea = entrada.readLine();
+            while (linea != null) {
+                String[] partes = linea.split("=", 2);
+                if (partes.length == 2) {
+                    String clave = partes[0];
+                    String valor = partes[1];
+                    if (clave.equals("vida")) {
+                        vida = Integer.parseInt(valor);
+                    } else if (clave.equals("monedas")) {
+                        monedas = Integer.parseInt(valor);
+                    } else if (clave.equals("debilidad") && !valor.equals("-")) {
+                        debilidad = Elemento.valueOf(valor);
+                    } else if (clave.equals("llave")) {
+                        llave = Boolean.parseBoolean(valor);
+                    } else if (clave.equals("recuerdoClave")) {
+                        recuerdoClave = Boolean.parseBoolean(valor);
+                    } else if (clave.equals("puertasReveladas")) {
+                        puertas = Integer.parseInt(valor);
+                    } else if (clave.equals("encuentrosMercader")) {
+                        encuentros = Integer.parseInt(valor);
+                    } else if (clave.equals("recuerdo")) {
+                        Recuerdo recuerdo = recuerdoDeLinea(valor);
+                        if (recuerdo != null) {
+                            cargado.agregarRecuerdo(recuerdo);
+                        }
+                    }
+                }
+                linea = entrada.readLine();
+            }
+        } catch (IOException | IllegalArgumentException e) {
+            return false;
+        }
+        if (cargado.getRecuerdos().isEmpty()) {
+            return false;
+        }
+        cargado.setDebilidad(debilidad);
+        cargado.setVida(Math.min(vida, cargado.getVidaMaxima()));
+        cargado.setMonedas(monedas);
+        cargado.setTieneLlave(llave);
+        cargado.setTieneRecuerdoClave(recuerdoClave);
+        jugador = cargado;
+        puertasReveladas = puertas;
+        encuentrosMercader = encuentros;
+        if (encuentrosMercader >= 3) {
+            mercader = new Mercader(stockDelMercader());
+        }
+        return true;
+    }
+
+    private Recuerdo recuerdoDeLinea(String datos) {
+        String[] partes = datos.split("\\|");
+        if (partes.length != 7) {
+            return null;
+        }
+        String nombre = partes[1];
+        String descripcion = partes[2];
+        int daño = Integer.parseInt(partes[5]);
+        int usos = Integer.parseInt(partes[6]);
+        if (partes[0].equals("HABILIDAD")) {
+            RecuerdoDeHabilidad habilidad = new RecuerdoDeHabilidad(nombre, descripcion,
+                    Elemento.valueOf(partes[3]), Boolean.parseBoolean(partes[4]));
+            habilidad.setDaño(daño);
+            habilidad.setUsosRestantes(usos);
+            return habilidad;
+        } else if (partes[0].equals("TRAUMA")) {
+            RecuerdoDeTrauma trauma = new RecuerdoDeTrauma(nombre, descripcion, Elemento.valueOf(partes[3]));
+            trauma.setDaño(daño);
+            return trauma;
+        } else if (partes[0].equals("PERSONA")) {
+            RecuerdoDePersona persona = new RecuerdoDePersona(nombre, descripcion);
+            persona.setUsosRestantes(usos);
+            return persona;
+        } else if (partes[0].equals("LUGAR")) {
+            RecuerdoDeLugar lugar = new RecuerdoDeLugar(nombre, descripcion);
+            lugar.setUsosRestantes(usos);
+            return lugar;
+        }
+        return null;
     }
 
     private void llegarAlRefugio() {
@@ -102,6 +320,7 @@ public class Juego {
             Dialogos.actualizarEstado(jugador);
             Dialogos.permitirGuardar(true);
             revelarPuertas();
+            guardarPartida();
 
             ArrayList<String> opciones = new ArrayList<>();
             opciones.add("Salir al bosque");
@@ -398,6 +617,7 @@ public class Juego {
     }
 
     private void muerteDefinitiva(String mensaje) {
+        new File("partida_" + ranura + ".txt").delete();
         Dialogos.zona("El final");
         Dialogos.actualizarEstado(jugador);
         Dialogos.mostrar(mensaje);

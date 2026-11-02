@@ -22,6 +22,10 @@ public class RecuerdoDeTrauma extends Recuerdo {
         return daño;
     }
 
+    public void setDaño(int daño) {
+        this.daño = daño;
+    }
+
     @Override
     protected int dañoDeAtaque() {
         return daño;

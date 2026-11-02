@@ -61,6 +61,10 @@ public class Personaje {
         return debilidad;
     }
 
+    public void setDebilidad(Elemento debilidad) {
+        this.debilidad = debilidad;
+    }
+
     public boolean isTieneLlave() {
         return tieneLlave;
     }
