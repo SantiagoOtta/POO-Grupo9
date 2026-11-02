@@ -6,8 +6,10 @@ import excepciones.DisolucionException;
 import excepciones.RecuerdoPerdidoException;
 import enemigos.EnemigoBase;
 import enemigos.GrupoDeEnemigos;
+import enemigos.JefeFinal;
 import enemigos.LadronDeRecuerdos   ;
 import npcs.Mercader;
+import npcs.GuardianDeRecuerdos;
 import recuerdos.Recuerdo;
 import recuerdos.RecuerdoDeHabilidad;
 import recuerdos.RecuerdoDeLugar;
@@ -38,18 +40,33 @@ public class Juego {
 
     public void iniciar() {
         Dialogos.alGuardar(() -> guardarPartida());
-        Dialogos.zona("El Limbo");
-        Dialogos.actualizarEstado(jugador);
-        Dialogos.mostrar("Abrís los ojos y no hay nada. Ni cielo, ni suelo, ni ruido.\n\n"
-                + "Sabés quién sos: el Verdugo. En vida quitaste muchas vidas, y ninguna fue decisión tuya.\n\n"
-                + "Y recordás algo más: recordás haber muerto.");
-        Dialogos.mostrar("Esto es El Limbo. Si hay redención para alguien como vos, tiene que estar en algún lugar de esta oscuridad.\n\n"
-                + "Caminás un poco, sin saber hacia dónde.");
-        Dialogos.mostrar("Entonces las ves: burbujas flotando frente a vos que, en medio de toda la oscuridad, emiten luz.");
-        elegirRecuerdosIniciales();
-        llegarAlRefugio();
-        menuCastillo();
+        boolean otraRun = true;
+        while (otraRun) {
+            reiniciarRun();
+            Dialogos.zona("El Limbo");
+            Dialogos.actualizarEstado(jugador);
+            Dialogos.mostrar("Abrís los ojos y no hay nada. Ni cielo, ni suelo, ni ruido.\n\n"
+                    + "Sabés quién sos: el Verdugo. Quitaste muchas vidas, y ninguna fue decisión tuya.\n\n"
+                    + "Y recordás algo más: haber muerto.");
+            Dialogos.mostrar("Esto es El Limbo. Si hay redención para alguien como vos, tiene que estar en algún lugar de esta oscuridad.\n\n"
+                    + "Caminás un poco, sin rumbo claro.");
+            Dialogos.mostrar("Entonces las ves: a lo lejos burbujas flotando, en medio de toda esta oscuridad, emiten una luz esperanzadora.");
+            elegirRecuerdosIniciales();
+            llegarAlRefugio();
+            menuCastillo();
+            otraRun = Dialogos.confirmar("La oscuridad vuelve a cerrarse. En algún lugar del Limbo, otro Verdugo está por abrir los ojos.\n\n"
+                    + "No va a recordar nada de esta run. Solo lo que dejaste en el cofre del Guardián lo va a estar esperando.\n\n"
+                    + "¿Empezás una run nueva?");
+        }
         Dialogos.cerrar();
+    }
+
+    private void reiniciarRun() {
+        jugador = new Personaje();
+        escenaActual = null;
+        puertasReveladas = 0;
+        encuentrosMercader = 0;
+        mercader = null;
     }
 
     public void otorgarRecompensa(Personaje personaje) {
@@ -105,43 +122,45 @@ public class Juego {
             Dialogos.permitirGuardar(false);
             String opcion = opciones.get(elegida);
 
-            if (opcion.equals("Salir al bosque")) {
-                try {
+            try {
+                if (opcion.equals("Salir al bosque")) {
                     recorrerBosque();
-                } catch (DisolucionException e) {
-                    Dialogos.zona("La niebla");
-                    Dialogos.actualizarEstado(jugador);
-                    Dialogos.mostrar(e.getMessage());
-                } catch (RecuerdoPerdidoException e) {
-                    muerteDefinitiva(e.getMessage());
-                    enElJuego = false;
+                } else if (opcion.equals("Comerciar con el Mercader")) {
+                    Dialogos.zona("El Castillo");
+                    Dialogos.mostrar("En un rincón del patio, el Mercader acomodó su manta como si siempre hubiera vivido ahí."
+                            + "Te ve llegar y sonríe sin dientes.");
+                    mercader.interactuar(jugador);
+                } else if (opcion.equals("Acercarte a la puerta del ala este")) {
+                    puertaEste();
+                } else if (opcion.equals("Acercarte a la puerta del ala oeste")) {
+                    puertaOeste();
+                } else if (opcion.equals("Acercarte a la puerta enorme")) {
+                    if (puertaJefe()) {
+                        enElJuego = false;
+                    }
                 }
-            } else if (opcion.equals("Comerciar con el Mercader")) {
-                Dialogos.zona("El Castillo");
-                Dialogos.mostrar("En un rincón del patio, el Mercader acomodo su 'tienda' como si hubiese estado ahí toda la vida"
-                        + "Te ve llegar y sonríe sin dientes.");
-                mercader.interactuar(jugador);
-            } else if (opcion.equals("Acercarte a la puerta del ala este")) {
-                puertaEste();
-            } else if (opcion.equals("Acercarte a la puerta del ala oeste")) {
-                puertaOeste();
-            } else if (opcion.equals("Acercarte a la puerta enorme")) {
-                puertaJefe();
+            } catch (DisolucionException e) {
+                Dialogos.zona("La oscuridad");
+                Dialogos.actualizarEstado(jugador);
+                Dialogos.mostrar(e.getMessage());
+            } catch (RecuerdoPerdidoException e) {
+                muerteDefinitiva(e.getMessage());
+                enElJuego = false;
             }
         }
     }
 
     private void puertaEste() {
         if (tieneRecuerdo("La casa de la infancia")) {
-            Dialogos.mostrar("Apoyás la mano en la madera y te acordás de un patio con baldosas rotas y una puerta que nunca cerraba bien. "
+            Dialogos.mostrar("Apoyás la mano en la madera y te acordás de un patio con baldosas rotas y una pureta que refleja bienvenida. "
                     + "Esta se abre sola.\n\n"
-                    + "Adentro hay una mesa, y sobre la mesa, una llave de hierro.");
+                    + "Adentro hay una mesa, y sobre ella, una llave de hierro.");
             jugador.setTieneLlave(true);
             Dialogos.actualizarEstado(jugador);
             Dialogos.mostrar("Tomás la llave del castillo. Cuando te das vuelta, la puerta ya no está.");
         } else {
             Dialogos.mostrar("Te acercás a la puerta de madera gastada. Está trabada: no se abre.\n\n"
-                    + "Sentís que se abre con un recuerdo. Para entrar necesitás el Lugar \"La casa de la infancia\".");
+                    + "Sentís que se abre con un recuerdo. Para entrar necesitás el lugar \"La casa de la infancia\".");
         }
     }
 
@@ -151,7 +170,7 @@ public class Juego {
                     + "La puerta se abre.");
             jugador.setTieneRecuerdoClave(true);
             Dialogos.actualizarEstado(jugador);
-            Dialogos.mostrar("Adentro te espera un último recuerdo: El último grito. La última ejecución antes de tu muerte. "
+            Dialogos.mostrar("Adentro te espera un último recuerdo: El Último Grito. La última ejecución antes de tu muerte. "
                     + "El condenado gritó una sola palabra, y era tu nombre.\n\n"
                     + "Cuando salís, la puerta ya no está.");
         } else {
@@ -161,13 +180,13 @@ public class Juego {
         }
     }
 
-    private void puertaJefe() {
+    private boolean puertaJefe() throws DisolucionException, RecuerdoPerdidoException {
         if (jugador.isTieneLlave() && jugador.isTieneRecuerdoClave()) {
-            boolean entrar = Dialogos.confirmar("La oscuridad se retira por completo. La puerta es enorme, de hierro negro, "
-                    + "y del otro lado alguien te espera desde hace mucho.\n\n"
+            boolean entrar = Dialogos.confirmar("La oscuridad se retira por completo. La puerta es enorme, mitad de hierro negro, "
+                    + "mitad oscuridad absoluta. Del otro lado alguien te espera.\n\n"
                     + "Tenés la llave y el recuerdo clave. ¿Entrás?");
             if (entrar) {
-                Dialogos.mostrar("(El jefe final se programa más adelante. Por ahora volvés al patio del castillo.)");
+                return combateFinal();
             }
         } else {
             String faltan = "";
@@ -177,9 +196,37 @@ public class Juego {
             if (!jugador.isTieneRecuerdoClave()) {
                 faltan = faltan + "\n- un recuerdo que todavía no tenés";
             }
-            Dialogos.mostrar("Te acercás a la puerta enorme. La oscuridad no te deja verla entera: solo distinguís una cerradura "
-                    + "y, al lado, un hueco donde parece que va un recuerdo.\n\nPara abrirla te falta:" + faltan);
+            Dialogos.mostrar("Te acercas a la puerta enorme. La oscuridad no te deja verla entera: solo distinguís una cerradura "
+                    + "y, al lado, un hueco donde parece que va un burbuja de recuerdo.\n\nPara abrirla te falta:" + faltan);
         }
+        return false;
+    }
+
+    private boolean combateFinal() throws DisolucionException, RecuerdoPerdidoException {
+        jugador.reiniciarResistencias();
+        Dialogos.zona("La sala del Juez");
+        Dialogos.mostrar("Metés la llave en la cerradura y apoyás el último grito en el hueco de al lado. La puerta se abre sin ruido.\n\n"
+                + "Del otro lado hay una sala enorme, vacía, con el piso cubierto de ceniza. Huele a plaza después de una ejecución.");
+        Elemento elemento = elementoAlAzar();
+        JefeFinal juez = new JefeFinal(elemento, 90, debilidadDe(elemento), 15, 2);
+        ArrayList<Enemigo> enemigos = new ArrayList<>();
+        enemigos.add(juez);
+        boolean ganaste = new GrupoDeEnemigos(enemigos).interactuar(jugador);
+        if (ganaste) {
+            victoria();
+        } else {
+            jugador.disolver();
+        }
+        return ganaste;
+    }
+
+    private void victoria() {
+        Dialogos.zona("La redención");
+        Dialogos.actualizarEstado(jugador);
+        Dialogos.mostrar("El martillo del Juez rueda por el piso y se deshace en ceniza. Detrás del estrado se abre una grieta de luz.\n\n"
+                + "Por primera vez en toda tu vida, y en toda tu muerte, nadie te dice qué hacer.");
+        Dialogos.mostrar("Cruzás la luz con tus recuerdos encima: los que te dolían y los que te salvaron.\n\n"
+                + "El Verdugo encontró su redención.\n\n");
     }
 
     private void recorrerBosque() throws DisolucionException, RecuerdoPerdidoException {
@@ -250,8 +297,8 @@ public class Juego {
                 return personaje -> encuentroConLadron();
             case "mercader":
                 return personaje -> encuentroConMercader();
-            case "guardián":
-                return personaje -> encuentroTemporal("el Guardián de Recuerdos");
+            case "guardian":
+                return new GuardianDeRecuerdos();
             case "claro":
                 return personaje -> claroEnCalma();
             default:
@@ -259,11 +306,7 @@ public class Juego {
         }
     }
 
-    private boolean encuentroTemporal(String quien) {
-        Dialogos.zona("El bosque");
-        Dialogos.mostrar("(Acá te cruzarías con " + quien + ": se programa más adelante.)");
-        return true;
-    }
+
 
     private boolean claroEnCalma() {
         Dialogos.zona("Un claro en calma");
@@ -358,21 +401,17 @@ public class Juego {
         Dialogos.zona("El final");
         Dialogos.actualizarEstado(jugador);
         Dialogos.mostrar(mensaje);
-        Dialogos.mostrar("El Verdugo se apaga en la oscuridad del Limbo, sin nada que recordar. La run termina.\n\n"
-                + "(Empezar una run nueva se programa más adelante.)");
+        Dialogos.mostrar("El Verdugo se apaga en la oscuridad del Limbo, sin nada que recordar.\n\n");
     }
 
     private void darMonedas(int cantidadEnemigos) {
         int monedas;
-        switch (cantidadEnemigos) {
-            case 1:
-                monedas = 10 + (int) (Math.random() * 6);
-                break;
-            case 2:
-                monedas = 20 + (int) (Math.random() * 6);
-                break;
-            default:
-                monedas = 30 + (int) (Math.random() * 11);
+        if (cantidadEnemigos == 1) {
+            monedas = 10 + (int) (Math.random() * 6);
+        } else if (cantidadEnemigos == 2) {
+            monedas = 20 + (int) (Math.random() * 6);
+        } else {
+            monedas = 30 + (int) (Math.random() * 11);
         }
         jugador.setMonedas(jugador.getMonedas() + monedas);
         Dialogos.zona("Después del combate");

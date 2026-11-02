@@ -11,7 +11,6 @@ import recuerdos.RecuerdoDeTrauma;
 import recuerdos.Reutilizable;
 import ui.Dialogos;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -226,13 +225,29 @@ public class GrupoDeEnemigos implements Interactuable {
 
     private String golpear(Enemigo enemigo, int daño, Elemento elemento) {
         int vidaAntes = enemigo.getVida();
+        int faseAntes = faseDe(enemigo);
         enemigo.recibirDaño(daño, elemento);
+        boolean cambioDeFase = faseDe(enemigo) != faseAntes;
         int hecho = vidaAntes - enemigo.getVida();
+        if (cambioDeFase) {
+            hecho = vidaAntes;
+        }
         String texto = " Le hacés " + hecho + " de daño " + aQuien(enemigo) + ".";
         if (elemento != null && elemento == enemigo.getDebilidad()) {
             texto = texto + " ¡Es débil al " + Dialogos.nombreElemento(elemento).toLowerCase() + "! (+50%)";
         }
+        if (cambioDeFase) {
+            return texto + "\n\nEl Juez del Limbo cae de rodillas. Por un momento creés que terminó, pero se vuelve a levantar, "
+                    + "más grande, con los ojos encendidos. Empieza la segunda fase.";
+        }
         return texto + siCayo(enemigo);
+    }
+
+    private int faseDe(Enemigo enemigo) {
+        if (enemigo instanceof JefeFinal) {
+            return ((JefeFinal) enemigo).getFaseActual();
+        }
+        return 0;
     }
 
     private String turnoDeLosEnemigos(Personaje personaje) {
@@ -241,28 +256,51 @@ public class GrupoDeEnemigos implements Interactuable {
             if (enemigo.sigueEnCombate() && personaje.getVida() > 0) {
                 if (enemigo instanceof LadronDeRecuerdos) {
                     texto = texto + robo(personaje, enemigo);
-                    continue;
-                }
-                Elemento elemento = enemigo.getElemento();
-                int golpesAntes = personaje.getResistencias().getOrDefault(elemento, 0);
-                int vidaAntes = personaje.getVida();
-                enemigo.infligirDaño(personaje);
-                int recibido = vidaAntes - personaje.getVida();
-                String nombreElemento = Dialogos.nombreElemento(elemento).toLowerCase();
-                texto = texto + "\n\nLa " + nombre(enemigo) + " te ataca con " + nombreElemento + ": te hace " + recibido + " de daño.";
-                if (elemento == personaje.getDebilidad() && elemento == personaje.getResistenciaTemporal()) {
-                    texto = texto + " Es tu debilidad (+50%), pero tu recuerdo te protege (-"
-                            + personaje.getPorcentajeResistenciaTemporal() + "%).";
-                } else if (elemento == personaje.getDebilidad()) {
-                    texto = texto + " Es tu debilidad (+50%).";
-                } else if (golpesAntes >= 3) {
-                    texto = texto + " Lo resistís (mitad de daño).";
-                } else if (golpesAntes == 2) {
-                    texto = texto + " Ya aguantaste 3 golpes de " + nombreElemento + ": hasta el próximo bosque te hace la mitad.";
+                } else {
+                    texto = texto + ataque(personaje, enemigo);
                 }
             }
         }
         return texto;
+    }
+
+    private String ataque(Personaje personaje, Enemigo enemigo) {
+        Elemento elemento = enemigo.getElemento();
+        int golpesAntes = personaje.getResistencias().getOrDefault(elemento, 0);
+        int vidaAntes = personaje.getVida();
+        enemigo.infligirDaño(personaje);
+        int recibido = vidaAntes - personaje.getVida();
+        String nombreElemento = Dialogos.nombreElemento(elemento).toLowerCase();
+        String texto = "\n\n" + elNombre(enemigo) + " te ataca con " + nombreElemento + ": te hace " + recibido + " de daño.";
+        if (esAtaqueEspecial(enemigo)) {
+            texto = "\n\n" + elNombre(enemigo) + " descarga su ataque especial con " + nombreElemento + ": te hace "
+                    + recibido + " de daño.";
+        }
+        if (elemento == personaje.getDebilidad() && elemento == personaje.getResistenciaTemporal()) {
+            texto = texto + " Es tu debilidad (+50%), pero tu recuerdo te protege (-"
+                    + personaje.getPorcentajeResistenciaTemporal() + "%).";
+        } else if (elemento == personaje.getDebilidad()) {
+            texto = texto + " Es tu debilidad (+50%).";
+        } else if (golpesAntes >= 3) {
+            texto = texto + " Lo resistís (mitad de daño).";
+        } else if (golpesAntes == 2) {
+            texto = texto + " Ya aguantaste 3 golpes de " + nombreElemento + ": hasta el próximo bosque te hace la mitad.";
+        }
+        if (enemigo instanceof JefeFinal && (((JefeFinal) enemigo).getTurnosJugados() + 1) % 3 == 0) {
+            texto = texto + "\n\nEl Juez levanta el martillo por encima de la cabeza. Su próximo golpe va a ser terrible.";
+        }
+        return texto;
+    }
+
+    private boolean esAtaqueEspecial(Enemigo enemigo) {
+        return enemigo instanceof JefeFinal && ((JefeFinal) enemigo).getTurnosJugados() % 3 == 0;
+    }
+
+    private String elNombre(Enemigo enemigo) {
+        if (enemigo instanceof JefeFinal) {
+            return "El " + nombre(enemigo);
+        }
+        return "La " + nombre(enemigo);
     }
 
     private Enemigo elegirObjetivo(String texto) {
@@ -300,7 +338,7 @@ public class GrupoDeEnemigos implements Interactuable {
         ArrayList<Recuerdo> despues = personaje.getRecuerdos();
         for (Recuerdo recuerdo : antes) {
             if (!despues.contains(recuerdo)) {
-                return "\n\nEl Ladrón de Recuerdos te mete la mano en el pecho y te arranca una parte de tu alma fragmentada:"
+                return "\n\nEl Ladrón de Recuerdos te mete la mano en el pecho y te arranca un recuerdo: "
                         + recuerdo.getNombre() + ".";
             }
         }
@@ -308,16 +346,20 @@ public class GrupoDeEnemigos implements Interactuable {
     }
 
     private String aQuien(Enemigo enemigo) {
-        if (enemigo instanceof LadronDeRecuerdos) {
+        if (enemigo instanceof LadronDeRecuerdos || enemigo instanceof JefeFinal) {
             return "al " + nombre(enemigo);
         }
         return "a la " + nombre(enemigo);
     }
 
     private String presentacion() {
+        if (enemigos.get(0) instanceof JefeFinal) {
+            return "Al fondo de la sala, sobre un estrado de piedra, te espera el Juez del Limbo. Tiene un martillo en la mano "
+                    + "y tu nombre en la boca.\n\n\"Verdugo. Mataste a todos los que te mandaron a matar. Ahora te toca a vos ser juzgado.\"";
+        }
         if (enemigos.get(0) instanceof LadronDeRecuerdos) {
-            return "Entre los árboles, una figura encorvada te viene siguiendo los pasos: El ladrón de Recuerdos"
-                    + "No quiere tu vida. Quiere robarte lo último que te queda.";
+            return "Entre los árboles, una figura encorvada te viene siguiendo los pasos: el Ladrón de Recuerdos. "
+                    + "No quiere tu vida. Quiere lo que recordás.";
         }
         if (enemigos.size() == 1) {
             return "De la niebla se desprende una figura oscura: la " + nombre(enemigos.get(0)) + ". Viene hacia vos.";
@@ -342,7 +384,10 @@ public class GrupoDeEnemigos implements Interactuable {
             return "\n\nEl Ladrón de Recuerdos se encoge, herido, y huye entre los árboles con lo que te robó.";
         }
         if (enemigo instanceof LadronDeRecuerdos) {
-            return "\n\nEl ladrón de Recuerdos case y se deshace en la niebla.";
+            return "\n\nEl Ladrón de Recuerdos cae y se deshace en la niebla.";
+        }
+        if (enemigo instanceof JefeFinal) {
+            return "\n\nEl Juez del Limbo cae, y esta vez no se levanta.";
         }
         return "\n\nLa " + nombre(enemigo) + " se deshace en la niebla.";
     }
@@ -367,7 +412,10 @@ public class GrupoDeEnemigos implements Interactuable {
 
     private String nombre(Enemigo enemigo) {
         if (enemigo instanceof LadronDeRecuerdos) {
-            return "Ladron de recuerdos";
+            return "Ladrón de Recuerdos";
+        }
+        if (enemigo instanceof JefeFinal) {
+            return "Juez del Limbo";
         }
         String nombre = "Sombra de " + Dialogos.nombreElemento(enemigo.getElemento());
         int iguales = 0;
