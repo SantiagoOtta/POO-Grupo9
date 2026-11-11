@@ -110,43 +110,50 @@ public class GuardianDeRecuerdos implements Interactuable {
     }
 
     public void guardarEnArchivo() {
-        ArrayList<String> lineas = new ArrayList<>();
-        synchronized (memoriaGlobal) {
-            for (ArrayList<Recuerdo> guardados : memoriaGlobal.values()) {
-                for (Recuerdo recuerdo : guardados) {
-                    lineas.add(aLinea(recuerdo));
-                }
-            }
-        }
-        Thread hilo = new Thread(() -> escribir(lineas));
+        Thread hilo = new Thread(() -> escribir());
         hilo.start();
     }
 
-    private static synchronized void escribir(ArrayList<String> lineas) {
-        try (PrintWriter salida = new PrintWriter(new FileWriter("memoria_global.txt"))) {
-            for (String linea : lineas) {
-                salida.println(linea);
+    private static void escribir() {
+        synchronized (memoriaGlobal) {
+            try (PrintWriter salida = new PrintWriter(new FileWriter("memoria_global.txt"))) {
+                for (ArrayList<Recuerdo> guardados : memoriaGlobal.values()) {
+                    for (Recuerdo recuerdo : guardados) {
+                        salida.println(aLinea(recuerdo));
+                    }
+                }
+            } catch (IOException e) {
+                Dialogos.avisar("No se pudo guardar el cofre del Guardián.");
             }
-        } catch (IOException e) {
-            Dialogos.avisar("No se pudo guardar el cofre del Guardián.");
         }
     }
 
     private static void cargarArchivo() {
         ArrayList<Recuerdo> cargados = new ArrayList<>();
+        int dañadas = 0;
         try (BufferedReader entrada = new BufferedReader(new FileReader("memoria_global.txt"))) {
             String linea = entrada.readLine();
             while (linea != null) {
-                Recuerdo recuerdo = deLinea(linea);
-                if (recuerdo != null) {
-                    cargados.add(recuerdo);
+                try {
+                    Recuerdo recuerdo = deLinea(linea);
+                    if (recuerdo == null) {
+                        dañadas++;
+                    } else {
+                        cargados.add(recuerdo);
+                    }
+                } catch (IllegalArgumentException e) {
+                    dañadas++;
+                } finally {
+                    linea = entrada.readLine();
                 }
-                linea = entrada.readLine();
             }
         } catch (IOException e) {
             return;
         }
         memoriaGlobal.put(null, cargados);
+        if (dañadas > 0) {
+            escribir();
+        }
     }
 
     private ArrayList<Recuerdo> disponiblesPara(Personaje personaje) {

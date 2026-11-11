@@ -1,7 +1,9 @@
 package ui;
 
+import core.Elemento;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class PanelEstado extends JPanel {
 
@@ -15,6 +17,8 @@ public class PanelEstado extends JPanel {
     private JButton botonSalir;
     private JPanel confirmarSalida;
     private Runnable accionGuardar;
+    private JButton botonTabla;
+    private JDialog ventanaTabla;
 
     public PanelEstado() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -28,6 +32,17 @@ public class PanelEstado extends JPanel {
         nombre.setFont(new Font(Font.SERIF, Font.BOLD, 18));
         nombre.setForeground(VentanaJuego.DORADO);
         nombre.setAlignmentX(Component.LEFT_ALIGNMENT);
+        botonTabla = crearBotonTabla();
+        botonTabla.addActionListener(e -> abrirTabla());
+
+        JPanel encabezado = new JPanel();
+        encabezado.setLayout(new BoxLayout(encabezado, BoxLayout.X_AXIS));
+        encabezado.setOpaque(false);
+        encabezado.setAlignmentX(Component.LEFT_ALIGNMENT);
+        encabezado.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        encabezado.add(nombre);
+        encabezado.add(Box.createHorizontalGlue());
+        encabezado.add(botonTabla);
 
         barraVida = new JProgressBar(0, 100);
         barraVida.setValue(100);
@@ -71,7 +86,7 @@ public class PanelEstado extends JPanel {
         confirmarSalida = crearConfirmacion();
         confirmarSalida.setVisible(false);
 
-        add(nombre);
+        add(encabezado);;
         add(Box.createVerticalStrut(14));
         add(barraVida);
         add(Box.createVerticalStrut(14));
@@ -154,5 +169,99 @@ public class PanelEstado extends JPanel {
     private void actualizarBotonRecuerdos() {
         String flecha = listaRecuerdos.isVisible() ? "▾" : "▸";
         botonRecuerdos.setText(flecha + " Recuerdos (" + cantidadRecuerdos + ")");
+    }
+
+    private JButton crearBotonTabla() {
+        JButton boton = new JButton(new ImageIcon(dibujarSimbolo()));
+        boton.setToolTipText("Tabla de elementos");
+        boton.setBackground(VentanaJuego.BOTON);
+        boton.setOpaque(true);
+        boton.setFocusPainted(false);
+        boton.setBorder(BorderFactory.createLineBorder(VentanaJuego.DORADO));
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        Dimension tamaño = new Dimension(28, 28);
+        boton.setPreferredSize(tamaño);
+        boton.setMinimumSize(tamaño);
+        boton.setMaximumSize(tamaño);
+        return boton;
+    }
+
+    private Image dibujarSimbolo() {
+        BufferedImage imagen = new BufferedImage(18, 18, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = imagen.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Elemento[] elementos = Elemento.values();
+        int porcion = 360 / elementos.length;
+        for (int i = 0; i < elementos.length; i++) {
+            g.setColor(VentanaJuego.colorDe(Dialogos.nombreElemento(elementos[i])));
+            g.fillArc(1, 1, 16, 16, 90 - i * porcion, -porcion);
+        }
+        g.setColor(VentanaJuego.BOTON);
+        g.fillOval(6, 6, 6, 6);
+        g.dispose();
+        return imagen;
+    }
+
+    private void abrirTabla() {
+        if (ventanaTabla == null) {
+            ventanaTabla = crearVentanaTabla();
+        }
+        ventanaTabla.setLocationRelativeTo(SwingUtilities.getWindowAncestor(this));
+        ventanaTabla.setVisible(true);
+    }
+
+    private JDialog crearVentanaTabla() {
+        JDialog ventana = new JDialog(SwingUtilities.getWindowAncestor(this), "Tabla de elementos");
+        ventana.setUndecorated(true);
+
+        JPanel contenido = new JPanel();
+        contenido.setLayout(new BoxLayout(contenido, BoxLayout.Y_AXIS));
+        contenido.setBackground(VentanaJuego.PANEL);
+        contenido.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(VentanaJuego.DORADO),
+                BorderFactory.createEmptyBorder(18, 22, 18, 22)));
+
+        JLabel titulo = new JLabel("TABLA DE ELEMENTOS");
+        titulo.setFont(new Font(Font.SERIF, Font.BOLD, 16));
+        titulo.setForeground(VentanaJuego.DORADO);
+        titulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel tabla = new JLabel(textoTabla());
+        tabla.setFont(new Font(Font.SERIF, Font.PLAIN, 15));
+        tabla.setForeground(VentanaJuego.TEXTO);
+        tabla.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JButton cerrar = VentanaJuego.crearBoton("Cerrar", 14);
+        cerrar.addActionListener(e -> ventana.setVisible(false));
+
+        contenido.add(titulo);
+        contenido.add(Box.createVerticalStrut(12));
+        contenido.add(tabla);
+        contenido.add(Box.createVerticalStrut(14));
+        contenido.add(cerrar);
+        ventana.setContentPane(contenido);
+        ventana.pack();
+        return ventana;
+    }
+
+    private String textoTabla() {
+        StringBuilder html = new StringBuilder("<html><div style='width:230px'>");
+        for (Elemento elemento : Elemento.values()) {
+            for (Elemento otro : Elemento.values()) {
+                if (otro.debilidad() == elemento) {
+                    html.append(conColor(elemento)).append(" es fuerte contra ").append(conColor(otro)).append("<br>");
+                }
+            }
+        }
+        html.append("<br><font color='#9a9386'><i>Pegarle a un enemigo con un elemento superior hace +50% de daño. "
+                + "Lo mismo te pasa a vos con tu debilidad.</i></font></div></html>");
+        return html.toString();
+    }
+
+    private String conColor(Elemento elemento) {
+        String nombre = Dialogos.nombreElemento(elemento);
+        Color color = VentanaJuego.colorDe(nombre);
+        String hexa = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        return "<b><font color='" + hexa + "'>" + nombre + "</font></b>";
     }
 }

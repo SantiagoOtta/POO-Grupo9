@@ -26,12 +26,23 @@ public class JefeFinal extends Enemigo {
 
     @Override
     public void infligirDaño(Personaje personaje) {
-        turnosJugados ++;
+        turnosJugados++;
         if (turnosJugados % 3 == 0) {
             ataqueEspecial(personaje);
         } else {
             personaje.recibirDaño(daño + (int) (Math.random() * 11), elemento);
         }
+        cambiarElemento();
+    }
+
+    private void cambiarElemento() {
+        Elemento[] elementos = Elemento.values();
+        Elemento nuevo = elemento;
+        while (nuevo == elemento) {
+            nuevo = elementos[(int) (Math.random() * elementos.length)];
+        }
+        elemento = nuevo;
+        debilidad = nuevo.debilidad();
     }
 
     public void ataqueEspecial(Personaje personaje) {
@@ -39,8 +50,8 @@ public class JefeFinal extends Enemigo {
     }
 
     public void avanzarFase() {
-        faseActual ++;
-        vidaMaxima = 125;
+        faseActual++;
+        vidaMaxima = 160;
         vida = vidaMaxima;
     }
 

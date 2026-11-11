@@ -32,6 +32,7 @@ public class GrupoDeEnemigos implements Interactuable {
             String resumen = turnoDelJugador(personaje);
             actualizarTarjetas();
             resumen = resumen + turnoDeLosEnemigos(personaje);
+            actualizarTarjetas();
             Dialogos.actualizarEstado(personaje);
             Dialogos.mostrar(resumen);
         }
@@ -285,6 +286,10 @@ public class GrupoDeEnemigos implements Interactuable {
             texto = texto + " Lo resistís (mitad de daño).";
         } else if (golpesAntes == 2) {
             texto = texto + " Ya aguantaste 3 golpes de " + nombreElemento + ": hasta el próximo bosque te hace la mitad.";
+        }
+        if (enemigo instanceof JefeFinal) {
+            texto = texto + "\n\nEl Juez del Limbo cambia de forma: ahora es de "
+                    + Dialogos.nombreElemento(enemigo.getElemento()).toLowerCase() + ".";
         }
         if (enemigo instanceof JefeFinal && (((JefeFinal) enemigo).getTurnosJugados() + 1) % 3 == 0) {
             texto = texto + "\n\nEl Juez levanta el martillo por encima de la cabeza. Su próximo golpe va a ser terrible.";
