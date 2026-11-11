@@ -137,36 +137,6 @@ Mi nombre es Giuliana Cataldi, tengo 22 años y soy estudiante en la Licenciatur
 
 - Java - Python - Kali Linux - SQL - React - Javascript
 
----
-
-### Thiago Luciano Arce
-<img src="./Foto/WhatsApp Image 2026-08-10 at 17.18.18.jpeg" alt="Thiago Luciano Arce" width="180">
-
-**Sobre mí**
-
-Tengo 22 años y estudio la carrera de ingenieria informatica en la facultad. Me interesa mucho aprender a programar en entornos formales.
-
-**🎯 Objetivos**
-
-- Aprobar la materia con buena nota.
-- Entender la lógica de la Programación Orientada a Objetos (POO).
-- Aprender a trabajar en equipo usando GitHub.
-
-**🏆 Logros**
-
-- Instalé y configuré correctamente IntelliJ IDEA en mi computadora.
-- Pude conectarme y entender la estructura del repositorio del grupo.
-
-**❤️ Gustos**
-
-- Me gusta jugar videojuegos, escuchar música, entrenar.
-- Pasar tiempo con amigos y ver series.
-
-**💻 Conocimientos**
-
-- Manejo básico de computadoras.
-- Herramientas de desarrollo: IntelliJ IDEA (en aprendizaje), GitHub (en aprendizaje).
-
 --- 
 
 ## Bitácora
@@ -235,8 +205,12 @@ Resolcion de problemas:
 
 ### 26/10 - Creacion de la introducción
 
-- Se crea la introduccion y comienzo del escenario principal.
+- Se crea la introducción y comienzo del escenario principal.
 
 ### 28/10 - Desarrollo del Area de combate
 
-- Se crea la generacion randomizada del bosque y el sistema de combate.
+- Se crea la generación randomizada del bosque y el sistema de combate.
+
+### 11/11 - Revision Final
+
+- Análisis final del código y consignas.
