@@ -187,30 +187,46 @@ Resolcion de problemas:
 
 - Llamada para resolver dudas y definir los parametros basicos del juego y narrativa
 
+---
+
 ### 03/10 - Documentacion y diagrama de clases
 
 - Llamada para la creacion en conjunto del diagrama de clases y documentacion
+
+---
 
 ### 7/10 - 8/10 - Creacion del Esqueleto del programa
 
 - Creacion de clases y firmas de metodos. 
 
+---
+
 ### 14/10 - Revisión del esqueleto del programa
 
 - Primera revisión previa al comienzo de la "segunda fase" del programa
+
+---
 
 ### 20/10 - 22/10 - Creacion del diseño de la interfaz grafica.
 
 - Decisiones de color, diseño y estructura de la interfaz.
 
+--- 
+
 ### 26/10 - Creacion de la introducción
 
 - Se crea la introducción y comienzo del escenario principal.
+
+--- 
 
 ### 28/10 - Desarrollo del Area de combate
 
 - Se crea la generación randomizada del bosque y el sistema de combate.
 
+--- 
+
 ### 11/11 - Revision Final
 
 - Análisis final del código y consignas.
+
+---
