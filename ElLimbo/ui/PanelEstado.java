@@ -19,6 +19,7 @@ public class PanelEstado extends JPanel {
     private Runnable accionGuardar;
     private JButton botonTabla;
     private JDialog ventanaTabla;
+    private Timer animacion;
 
     public PanelEstado() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -89,14 +90,20 @@ public class PanelEstado extends JPanel {
         add(encabezado);;
         add(Box.createVerticalStrut(14));
         add(barraVida);
-        add(Box.createVerticalStrut(14));
+        add(Box.createVerticalStrut(12));
+        add(crearSeparador());
+        add(Box.createVerticalStrut(12));
         add(datos);
-        add(Box.createVerticalStrut(14));
+        add(Box.createVerticalStrut(12));
+        add(crearSeparador());
+        add(Box.createVerticalStrut(12));
         add(botonRecuerdos);
         add(Box.createVerticalStrut(6));
         add(listaRecuerdos);
         add(Box.createVerticalGlue());
         add(aviso);
+        add(crearSeparador());
+        add(Box.createVerticalStrut(10));
         add(Box.createVerticalStrut(8));
         add(botonGuardar);
         add(Box.createVerticalStrut(8));
@@ -106,12 +113,30 @@ public class PanelEstado extends JPanel {
 
     public void ponerEstado(int vida, int vidaMaxima, String textoDatos, String textoRecuerdos, int cantidad) {
         barraVida.setMaximum(vidaMaxima);
-        barraVida.setValue(vida);
-        barraVida.setString(vida + " / " + vidaMaxima);
+        animarBarra(vida, vidaMaxima);
         datos.setText(textoDatos);
         listaRecuerdos.setText(textoRecuerdos);
         cantidadRecuerdos = cantidad;
         actualizarBotonRecuerdos();
+    }
+
+    private void animarBarra(int destino, int vidaMaxima) {
+        if (animacion != null) {
+            animacion.stop();
+        }
+        animacion = new Timer(20, e -> {
+            int actual = barraVida.getValue();
+            int distancia = destino - actual;
+            if (distancia == 0) {
+                animacion.stop();
+            } else {
+                int paso = Math.max(1, Math.abs(distancia) / 6);
+                int nuevo = distancia > 0 ? actual + paso : actual - paso;
+                barraVida.setValue(nuevo);
+                barraVida.setString(nuevo + " / " + vidaMaxima);
+            }
+        });
+        animacion.start();
     }
 
     public void permitirGuardar(boolean permitido) {
@@ -125,6 +150,16 @@ public class PanelEstado extends JPanel {
 
     public void ponerAviso(String texto) {
         aviso.setText("<html><div style='width:180px'>" + texto + "</div></html>");
+    }
+
+
+    private JSeparator crearSeparador() {
+        JSeparator separador = new JSeparator();
+        separador.setForeground(VentanaJuego.SEPARADOR);
+        separador.setBackground(VentanaJuego.PANEL);
+        separador.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        separador.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return separador;
     }
 
     private JPanel crearConfirmacion() {
@@ -261,7 +296,6 @@ public class PanelEstado extends JPanel {
     private String conColor(Elemento elemento) {
         String nombre = Dialogos.nombreElemento(elemento);
         Color color = VentanaJuego.colorDe(nombre);
-        String hexa = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-        return "<b><font color='" + hexa + "'>" + nombre + "</font></b>";
+        return "<b><font color='" + VentanaJuego.hexa(color) + "'>" + nombre + "</font></b>";
     }
 }

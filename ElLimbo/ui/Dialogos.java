@@ -9,6 +9,7 @@ import recuerdos.RecuerdoDePersona;
 import recuerdos.RecuerdoDeTrauma;
 
 import javax.swing.SwingUtilities;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -50,13 +51,16 @@ public class Dialogos {
         int vida = personaje.getVida();
         int vidaMaxima = personaje.getVidaMaxima();
 
-        String datos = "<html>Monedas: " + personaje.getMonedas()
-                + "<br>Bonus de daño: +" + personaje.getBonusDaño()
-                + "<br>Debilidad: " + nombreElemento(personaje.getDebilidad())
-                + "<br>Resistencias: " + textoResistencias(personaje)
+        String nombreDebilidad = nombreElemento(personaje.getDebilidad());
+        String datos = "<html>" + fila("●", VentanaJuego.DORADO_CLARO, "Monedas", String.valueOf(personaje.getMonedas()))
+                + "<br>" + fila("⚔", VentanaJuego.ROJO_CLARO, "Bonus de daño", "+" + personaje.getBonusDaño())
+                + "<br>" + fila("✶", VentanaJuego.colorDe(nombreDebilidad), "Debilidad", nombreDebilidad)
+                + "<br>" + fila("◈", VentanaJuego.TEXTO, "Resistencias", textoResistencias(personaje))
                 + textoProteccion(personaje)
-                + "<br>Llave del castillo: " + (personaje.isTieneLlave() ? "sí" : "no")
-                + "<br>Recuerdo clave: " + (personaje.isTieneRecuerdoClave() ? "sí" : "no")
+                + "<br>" + fila("◆", personaje.isTieneLlave() ? VentanaJuego.DORADO : VentanaJuego.TEXTO_SECUNDARIO,
+                "Llave del castillo", personaje.isTieneLlave() ? "sí" : "no")
+                + "<br>" + fila("✦", personaje.isTieneRecuerdoClave() ? VentanaJuego.DORADO : VentanaJuego.TEXTO_SECUNDARIO,
+                "Recuerdo clave", personaje.isTieneRecuerdoClave() ? "sí" : "no")
                 + "</html>";
 
         StringBuilder lista = new StringBuilder("<html><div style='width:180px'>");
@@ -131,9 +135,15 @@ public class Dialogos {
         if (personaje.getPorcentajeResistenciaTemporal() == 0 || personaje.getResistenciaTemporal() == null) {
             return "";
         }
-        return "<br>Protección: " + personaje.getPorcentajeResistenciaTemporal() + "% contra "
-                + nombreElemento(personaje.getResistenciaTemporal()).toLowerCase();
+        return "<br>" + fila("♥", VentanaJuego.VERDE, "Protección", personaje.getPorcentajeResistenciaTemporal() + "% contra "
+                + nombreElemento(personaje.getResistenciaTemporal()).toLowerCase());
     }
+
+    private static String fila(String icono, Color colorIcono, String etiqueta, String valor) {
+        return "<font color='" + VentanaJuego.hexa(colorIcono) + "'>" + icono + "</font> "
+                + "<font color='" + VentanaJuego.hexa(VentanaJuego.TEXTO_SECUNDARIO) + "'>" + etiqueta + ":</font> " + valor;
+    }
+
 
     private static String textoResistencias(Personaje personaje) {
         String texto = "";

@@ -1,6 +1,8 @@
 package ui;
 
+import core.Elemento;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -12,10 +14,15 @@ public class VentanaJuego extends JFrame {
     static final Color FONDO = new Color(0x15141C);
     static final Color PANEL = new Color(0x22202C);
     static final Color BOTON = new Color(0x2E2B3A);
+    static final Color BOTON_RESALTADO = new Color(0x3F3A52);
     static final Color TEXTO = new Color(0xE6E1D3);
     static final Color TEXTO_SECUNDARIO = new Color(0x9A9386);
     static final Color DORADO = new Color(0xC9A25A);
+    static final Color DORADO_CLARO = new Color(0xF0D08C);
+    static final Color SEPARADOR = new Color(0x4A4436);
     static final Color ROJO = new Color(0xB03A3A);
+    static final Color ROJO_CLARO = new Color(0xE0705F);
+    static final Color VERDE = new Color(0x7BC47F);
 
     private JLabel titulo;
     private JLabel narracion;
@@ -101,8 +108,7 @@ public class VentanaJuego extends JFrame {
     }
 
     public void ponerPregunta(String texto, String[] opciones, String[] ayudas, ArrayBlockingQueue<Integer> respuestas) {
-        narracion.setText("<html><div style='width:390px'>" + texto.replace("\n", "<br>") + "</div></html>");
-        botones.removeAll();
+        narracion.setText("<html><div style='width:390px'>" + colorear(texto) + "</div></html>");        botones.removeAll();
         for (int i = 0; i < opciones.length; i++) {
             JButton boton = crearBoton(opciones[i]);
             if (ayudas != null && ayudas[i] != null) {
@@ -138,8 +144,7 @@ public class VentanaJuego extends JFrame {
     }
 
     public void pedirObjetivo(String texto, ArrayBlockingQueue<Integer> respuestas) {
-        narracion.setText("<html><div style='width:390px'>" + texto.replace("\n", "<br>") + "</div></html>");
-        botones.removeAll();
+        narracion.setText("<html><div style='width:390px'>" + colorear(texto) + "</div></html>");        botones.removeAll();
         botones.revalidate();
         botones.repaint();
         for (TarjetaEnemigo tarjeta : listaTarjetas) {
@@ -180,13 +185,59 @@ public class VentanaJuego extends JFrame {
         boton.setOpaque(true);
         boton.setFocusPainted(false);
         boton.setHorizontalAlignment(SwingConstants.LEFT);
-        boton.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(DORADO),
-                BorderFactory.createEmptyBorder(8, 16, 8, 16)));
+        boton.setBorder(bordeDeBoton(DORADO));
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         boton.setAlignmentX(Component.LEFT_ALIGNMENT);
         boton.setMaximumSize(new Dimension(Integer.MAX_VALUE, boton.getPreferredSize().height));
+        agregarResaltado(boton);
         return boton;
+    }
+
+    private static Border bordeDeBoton(Color color) {
+        return BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(color),
+                BorderFactory.createEmptyBorder(8, 16, 8, 16));
+    }
+
+    private static void agregarResaltado(JButton boton) {
+        boton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (boton.isEnabled()) {
+                    boton.setBackground(BOTON_RESALTADO);
+                    boton.setForeground(DORADO_CLARO);
+                    boton.setBorder(bordeDeBoton(DORADO_CLARO));
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                boton.setBackground(BOTON);
+                boton.setForeground(TEXTO);
+                boton.setBorder(bordeDeBoton(DORADO));
+            }
+        });
+    }
+
+    private static String colorear(String texto) {
+        String resultado = texto;
+        for (Elemento elemento : Elemento.values()) {
+            String nombre = Dialogos.nombreElemento(elemento);
+            resultado = resultado.replaceAll("\\b" + nombre + "\\b", resaltar(nombre, colorDe(nombre)));
+        }
+        resultado = resultado.replaceAll("(?<![+\\d])(\\d+) de daño", resaltar("$1 de daño", ROJO_CLARO));
+        resultado = resultado.replaceAll("te cuesta (\\d+) de vida", "te cuesta " + resaltar("$1 de vida", ROJO_CLARO));
+        resultado = resultado.replaceAll("Recuperás (\\d+) de vida", "Recuperás " + resaltar("$1 de vida", VERDE));
+        resultado = resultado.replaceAll("(\\d+) monedas", resaltar("$1 monedas", DORADO_CLARO));
+        return resultado.replace("\n", "<br>");
+    }
+
+    private static String resaltar(String texto, Color color) {
+        return "<b><font color='" + hexa(color) + "'>" + texto + "</font></b>";
+    }
+
+    static String hexa(Color color) {
+        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
     private void apagarBotones() {
